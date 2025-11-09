@@ -21,5 +21,9 @@ export default defineConfig({
 		Components({
 			resolvers: [ElementPlusResolver()]
 		})
-	]
+	],
+	server: {
+		port: 8888,
+		proxy: {}
+	}
 })

@@ -1,10 +1,20 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { NestExpressApplication } from '@nestjs/platform-express'
+import { HttpFilter } from './shared/globa-http.filter'
+import { ValidationPipe } from '@nestjs/common'
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
-  app.useStaticAssets('public',{prefix:'/static'})
+  app.enableCors()
+  app.setGlobalPrefix('api')
+  app.useGlobalFilters(new HttpFilter())
+  app.useGlobalPipes(new ValidationPipe({transform:true}))
+
+  app.useStaticAssets('public', { prefix: '/static' })
+  
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER))
 	await app.listen(process.env.PORT ?? 3000)
 }
 bootstrap()

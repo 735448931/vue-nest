@@ -5,6 +5,7 @@
             </div>
 
             <div class="layout-body">
+
                 <div class="layout-sidebar">
                     <Sidebar></Sidebar>
                 </div>
@@ -12,6 +13,7 @@
                 <div class="layout-content">
                     <Content></Content>
                 </div>
+                
             </div>
 
             <div class="layout-footer">

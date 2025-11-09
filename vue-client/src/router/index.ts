@@ -10,14 +10,16 @@ export const staticRoutes: RouteRecordRaw[] = [
 	},
 	{
 		path: '/',
-		component: Layout,
 		name: 'Layout',
-		// children: [
-			// {
-			// 	path: 'dashboard',
-			// 	component: () => import('@/page/dashboard/index.vue')
-			// },
-		// ]
+		component: Layout,
+		redirect: '/dashboard',
+		children: [
+			{
+				path: '/dashboard',
+				name: 'Dashboard',
+				component: () => import('@/page/dashboard/index.vue')
+			}
+		]
 	}
 ]
 
