@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@nestjs/microservices": "^11.1.8",
     "axios": "^1.13.2",
     "element-plus": "^2.11.7",
     "pinia": "^3.0.3",
