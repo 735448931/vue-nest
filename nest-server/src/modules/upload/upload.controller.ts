@@ -18,6 +18,7 @@ import {
 import { storage } from '../../config/upload-file-storage'
 import { UploadImageParsePipe } from './pipes/upload-image-parse.pipe'
 import fs from 'fs'
+import path from 'path'
 import config from '../../config/config'
 
 const OSS = require('ali-oss')
@@ -30,7 +31,7 @@ export class UploadController {
 	@Post('image')
 	@UseInterceptors(
 		FileInterceptor('image', {
-			storage:storage
+			storage: storage
 		})
 	)
 	uploadImageFile(
@@ -47,7 +48,8 @@ export class UploadController {
 	}
 
 	// 上传到阿里云 oss
-	@Post('image-ali-oss')
+	@Post('ali-oss')
+	@UseInterceptors(FileInterceptor('image'))
 	async uploadAliOss(
 		@UploadedFile() file: Express.Multer.File,
 		@Body() body: any
@@ -55,20 +57,67 @@ export class UploadController {
 		if (!file) {
 			throw new BadRequestException('No file uploaded')
 		}
+
+		const allowedMimeTypes = [
+			'image/jpeg',
+			'image/jpg',
+			'image/png',
+			'image/webp'
+		]
+		const maxFileSize = 2 * 1024 * 1024
+
+		if (!allowedMimeTypes.includes(file.mimetype)) {
+			throw new BadRequestException(
+				'Only jpg, jpeg, png, webp images are allowed'
+			)
+		}
+
+		if (file.size > maxFileSize) {
+			throw new BadRequestException('Image size must be smaller than 2MB')
+		}
+
 		const client = new OSS({ ...config.ali_oss })
+
+		const originalName = path.basename(file.originalname)
+		const safeFileName = originalName.replace(/"/g, '')
+		const timestamp = Date.now()
+		const objectName = `${timestamp}-${safeFileName}`
+		const encodedFileName = encodeURIComponent(safeFileName)
 
 		const headers = {
 			// 指定Object的存储类型。
 			'x-oss-storage-class': 'Standard',
-			// 通过文件URL访问文件时，指定以附件形式下载文件，下载后的文件名称定义为example.txt。
-			'Content-Disposition': 'attachment; filename="1.png"',
+			// 访问时以附件形式下载，并保持上传时的文件名（支持中文）。
+			'Content-Disposition': `attachment; filename="${safeFileName}"; filename*=UTF-8''${encodedFileName}`,
 			// 指定PutObject操作时是否覆盖同名目标Object。此处设置为true，表示禁止覆盖同名Object。
-			'x-oss-forbid-overwrite': 'true'
+			'x-oss-forbid-overwrite': 'true',
+			'Content-Type': file.mimetype
 		}
 
-		const result = await client.put('cat.png', './mao.png', { headers })
+		if (!file.buffer && !file.path) {
+			throw new BadRequestException(
+				'File data is not available for upload'
+			)
+		}
 
-		return 'This action adds a new user'
+		const result = file.buffer
+			? await client.put(objectName, file.buffer, { headers })
+			: await client.putStream(
+					objectName,
+					fs.createReadStream(file.path),
+					{ headers }
+				)
+
+		console.log('🍿🍿🍿🍿🍿result:', result)
+
+		return {
+			code: 200,
+			message: '成功',
+			data: {
+				objectName,
+				url: result.url
+			}
+		}
 	}
 
 	// // 指定 storage 的方式
@@ -138,7 +187,7 @@ export class UploadController {
 		fs.rmSync(files[0].path)
 	}
 
-	@Get('merge')
+	@Get('big-file-merge')
 	merge(@Query('name') name: string) {
 		const chunkDir = 'uploads/chunks_' + name
 

@@ -1,6 +1,7 @@
-import { Body, Controller, FileTypeValidator, Get, HttpException, Inject, MaxFileSizeValidator, ParseFilePipe, Post, UploadedFile, UploadedFiles, UseInterceptors, ValidationPipe } from '@nestjs/common'
+import { Body, Controller, FileTypeValidator, Get, HttpException, Inject, MaxFileSizeValidator, ParseFilePipe, Post, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common'
 import { AppService } from './app.service'
 import { isInt, IsNotEmpty, max, MaxLength } from 'class-validator'
+import { LoginGuard } from './login.guard'
 export class Ooo {
 	@MaxLength(5)
 	name: string
@@ -25,7 +26,17 @@ export class AppController {
 	}
 	@Post('/test-post')
 	ooo(@Body() obj: Ooo) {
-		console.log(obj);
-		
+		console.log(obj)
+	}
+
+	@Get('aaa')
+	@UseGuards(LoginGuard)
+	aaa() {
+		return 'aaa'
+	}
+
+	@Get('bbb')
+	bbb() {
+		return 'bbb'
 	}
 }

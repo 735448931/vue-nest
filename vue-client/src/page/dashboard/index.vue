@@ -3,19 +3,18 @@
         单张上传
     </el-upload>
 
-    <el-upload :auto-upload="false" :on-change="onchange" drag>
+    <el-upload :auto-upload="false" :on-change="handleSharding" drag>
         分片上传
     </el-upload>
 
-    <el-upload :auto-upload="false" :on-change="onchange" drag>
+    <el-upload :auto-upload="false" :on-change="handleAliOss" drag>
         上传到阿里云
     </el-upload>
 </template>
 
 <script setup lang="ts">
-import { uploadImageApi, uploadImagesApi } from '@/api/upload'
-import axios from 'axios';
-import type { UploadFile, UploadFiles } from 'element-plus'
+import { uploadImageApi, uploadChunkApi, mergeChunkApi, uploadAliOssApi } from '@/api/upload'
+import type { UploadFile } from 'element-plus'
 
 
 
@@ -28,36 +27,40 @@ const handleImageChange = async (uploadFile: UploadFile) => {
     await uploadImageApi(form)
 }
 
-
-
-const chunkSize = 2 * 1024;
-
-const onchange = async (uploadFile:any) => {
+// 分片上传 
+const handleSharding = async (uploadFile: UploadFile) => {
+    if (!uploadFile.raw) return
+    const chunkSize = 200 * 1024;  // 200kB 一个切片
+    const chunks = [];
+    const tasks: Promise<unknown>[] = [];
 
     const file = uploadFile.raw;
-
-    const chunks = [];
     let startPos = 0;
+
     while (startPos < file.size) {
         chunks.push(file.slice(startPos, startPos + chunkSize));
         startPos += chunkSize;
     }
 
-    const tasks:any = [];
-    chunks.map((chunk, index) => {
+    chunks.forEach((chunk, index) => {
         const data = new FormData();
         data.set('name', file.name + '-' + index)
         data.append('files', chunk);
-        tasks.push(axios.post('http://localhost:3000/api/upload/big-file', data))
-
-    })
+        tasks.push(uploadChunkApi(data))
+    })    
 
     await Promise.all(tasks)
-    axios.get('http://localhost:3000/api/upload/merge?name=' + file.name)
+    await mergeChunkApi(file.name)
 }
 
 
-
+// 上传到阿里云
+const handleAliOss = async (uploadFile: UploadFile) => {
+    if (!uploadFile.raw) return
+    const form = new FormData()
+    form.append('image', uploadFile.raw)
+    await uploadAliOssApi(form)
+}
 
 
 

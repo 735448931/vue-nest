@@ -10,6 +10,7 @@ import { User } from './modules/user/entities/user.entity';
 import { CityModule } from './modules/city/city.module';
 import { City } from './modules/city/entities/city.entity';
 import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
 	imports: [
@@ -38,7 +39,7 @@ import { ConfigModule } from '@nestjs/config';
 			port: 3306,
 			username: 'root',
 			password: 'haoxuan',
-			database: 'mysql-test',
+			database: 'nest-server',
 			synchronize: true,
 			logging: true,
 			entities: [User,City],
@@ -47,6 +48,11 @@ import { ConfigModule } from '@nestjs/config';
 			extra: {
 				authPlugin: 'sha256_password'
 			}
+		}),
+		JwtModule.register({
+			global: true,
+			secret:'mySecretKey',
+			signOptions:{expiresIn:'7d'}
 		}),
 		CityModule
 	],
