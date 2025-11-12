@@ -15,6 +15,7 @@
 <script setup lang="ts">
 import { uploadImageApi, uploadChunkApi, mergeChunkApi, uploadAliOssApi } from '@/api/upload'
 import type { UploadFile } from 'element-plus'
+import { onMounted } from 'vue'
 
 
 
@@ -63,5 +64,14 @@ const handleAliOss = async (uploadFile: UploadFile) => {
 }
 
 
+onMounted(() => {
+
+    console.log('sse start--------');
+    
+    const eventSource = new EventSource('http://localhost:3000/api/stream')
+    eventSource.onmessage = ({ data }) => {
+        console.log('New ::::',JSON.parse(data));
+    }
+})
 
 </script>

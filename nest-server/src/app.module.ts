@@ -11,6 +11,12 @@ import { CityModule } from './modules/city/city.module';
 import { City } from './modules/city/entities/city.entity';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { Permission } from './modules/user/entities/permission.entity';
+import { Role } from './modules/user/entities/role.entity';
+import { LoginGuard } from './login.guard';
+import { PermissionGuard } from './permission.guard';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { RequestLogInterceptor } from './request-log.interceptor';
 
 @Module({
 	imports: [
@@ -42,7 +48,7 @@ import { JwtModule } from '@nestjs/jwt';
 			database: 'nest-server',
 			synchronize: true,
 			logging: true,
-			entities: [User,City],
+			entities: [User, City, Role, Permission],
 			poolSize: 10,
 			connectorPackage: 'mysql2',
 			extra: {
@@ -51,12 +57,26 @@ import { JwtModule } from '@nestjs/jwt';
 		}),
 		JwtModule.register({
 			global: true,
-			secret:'mySecretKey',
-			signOptions:{expiresIn:'7d'}
+			secret: 'mySecretKey',
+			signOptions: { expiresIn: '7d' }
 		}),
 		CityModule
 	],
 	controllers: [AppController],
-	providers: [AppService]
+	providers: [
+		AppService,
+		{
+			provide: APP_GUARD,
+			useClass: LoginGuard
+		},
+		{
+			provide: APP_GUARD,
+			useClass: PermissionGuard
+		},
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: RequestLogInterceptor
+		}
+	]
 })
 export class AppModule {}

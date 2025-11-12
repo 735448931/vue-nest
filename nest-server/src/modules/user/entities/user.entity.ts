@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import { Role } from './role.entity'
 
 @Entity()
 export class User {
@@ -6,24 +7,24 @@ export class User {
 	id: number
 
 	@Column({
-		length: 50,
-		comment: '用户名'
+		length: 50
 	})
 	username: string
 
 	@Column({
-		length: 50,
-		comment: '密码'
+		length: 50
 	})
 	password: string
 
-	@CreateDateColumn({
-		comment: '创建时间'
-	})
+	@CreateDateColumn()
 	createTime: Date
 
-	@UpdateDateColumn({
-		comment: '更新时间'
-	})
+	@UpdateDateColumn()
 	updateTime: Date
+
+	@ManyToMany(() => Role)
+	@JoinTable({
+		name: 'user_role_relation'
+	})
+	roles: Role[]
 }
