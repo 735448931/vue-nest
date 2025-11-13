@@ -1,16 +1,36 @@
-import { IsNotEmpty, IsString, Length, Matches } from 'class-validator'
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator'
 
 export class RegisterDto {
-	@IsString()
-	@IsNotEmpty()
-	@Length(6, 30)
-	@Matches(/^[a-zA-Z0-9#$%_-]+$/, {
-		message: '用户名只能是字母、数字或者 #、$、%、_、- 这些字符'
+
+	@IsNotEmpty({
+		message: '用户名不能为空'
 	})
 	username: string
 
-	@IsString()
-	@IsNotEmpty()
-	@Length(6, 30)
+
+	@IsNotEmpty({
+		message: '密码不能为空'
+	})
+	@MinLength(6, {
+		message: '密码不能少于 6 位'
+	})
 	password: string
+
+
+	@IsNotEmpty({
+		message: '邮箱不能为空'
+	})
+	@IsEmail(
+		{},
+		{
+			message: '不是合法的邮箱格式'
+		}
+	)
+	email: string
+	
+
+	@IsNotEmpty({
+		message: '验证码不能为空'
+	})
+	code: string
 }

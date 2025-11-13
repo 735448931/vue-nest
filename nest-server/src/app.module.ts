@@ -13,10 +13,12 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { Permission } from './modules/user/entities/permission.entity';
 import { Role } from './modules/user/entities/role.entity';
-import { LoginGuard } from './login.guard';
-import { PermissionGuard } from './permission.guard';
+// import { LoginGuard } from './login.guard';
+// import { PermissionGuard } from './permission.guard';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { RequestLogInterceptor } from './request-log.interceptor';
+import { RequestLogInterceptor } from './interceptor/request-log.interceptor';
+import { RedisModule } from './modules/redis/redis.module';
+import { EmailModule } from './modules/email/email.module';
 
 @Module({
 	imports: [
@@ -60,23 +62,25 @@ import { RequestLogInterceptor } from './request-log.interceptor';
 			secret: 'mySecretKey',
 			signOptions: { expiresIn: '7d' }
 		}),
-		CityModule
+		RedisModule,
+		CityModule,
+		EmailModule,
 	],
 	controllers: [AppController],
 	providers: [
 		AppService,
-		{
-			provide: APP_GUARD,
-			useClass: LoginGuard
-		},
-		{
-			provide: APP_GUARD,
-			useClass: PermissionGuard
-		},
-		{
-			provide: APP_INTERCEPTOR,
-			useClass: RequestLogInterceptor
-		}
+		// {
+		// 	provide: APP_GUARD,
+		// 	useClass: LoginGuard
+		// },
+		// {
+		// 	provide: APP_GUARD,
+		// 	useClass: PermissionGuard
+		// },
+		// {
+		// 	provide: APP_INTERCEPTOR,
+		// 	useClass: RequestLogInterceptor
+		// }
 	]
 })
 export class AppModule {}

@@ -13,40 +13,39 @@ export class UserController {
 	@Inject(JwtService)
 	private jwtService: JwtService
 
-	@Post('login')
-	async login(
-		@Body(ValidationPipe) user: LoginDto,
-		@Res({ passthrough: true }) res: Response
-	) {
-		const foundUser = await this.userService.login(user)
 
-		console.log('🍿🍿🍿🍿🍿foundUser:', foundUser);
-		
 
-		if (foundUser) {
-			const token = await this.jwtService.signAsync({
-				user: {
-					id: foundUser.id,
-					username: foundUser.username,
-					roles: foundUser.roles
-				}
-			})
-			res.setHeader('token', token)
-			return 'login success'
-		} else {
-			return 'login fail'
-		}
-	}
-
+	// 用户注册
 	@Post('register')
 	async register(@Body(ValidationPipe) user: RegisterDto) {
 		return await this.userService.register(user)
 	}
 
-	@Get('init')
-	async initData() {
-		await this.userService.initData()
-		return 'done'
+
+	@Post('login')
+	async login(
+		@Body(ValidationPipe) user: LoginDto,
+		@Res({ passthrough: true }) res: Response
+	) {
+		console.log('🍿🍿🍿🍿🍿user:', user)
+
+		const foundUser = await this.userService.login(user)
+
+		console.log('🍿🍿🍿🍿🍿foundUser:', foundUser)
+
+		if (foundUser) {
+			// const token = await this.jwtService.signAsync({
+			// 	user: {
+			// 		id: foundUser.id,
+			// 		username: foundUser.username,
+			// 		roles: foundUser.roles
+			// 	}
+			// })
+			// res.setHeader('token', token)
+			return 'login success'
+		} else {
+			return 'login fail'
+		}
 	}
 
 	@Post()

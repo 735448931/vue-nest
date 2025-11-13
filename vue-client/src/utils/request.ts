@@ -9,6 +9,12 @@ import type {
 
 const config = { baseURL: import.meta.env.VITE_BASE_API, timeout: 10000 }
 
+export interface Resonse<T = any> {
+	code: number
+	message: any
+	data: T
+}
+
 class RequestHttp {
 	private instance: AxiosInstance
 	constructor() {
@@ -53,33 +59,33 @@ class RequestHttp {
 		url: string,
 		query?: any,
 		config?: AxiosRequestConfig
-	): Promise<T> {
-		if (query?.filter) {
-			query.filter = JSON.stringify(query.filter)
-		}
-
-		if (query?.sort) {
-			query.sort = JSON.stringify(query.sort)
-		}
-
+	): Promise<Resonse<T>> {
 		let _config = {
 			params: query,
 			...config
 		}
 
-		return this.instance.get(url, _config)
+		return this.instance.get<Resonse<T>, Resonse<T>>(url, _config)
 	}
 
-	post<T>(url: string, data: any, config?: AxiosRequestConfig): Promise<T> {
-		return this.instance.post(url, data, config)
+	post<T = any>(
+		url: string,
+		data: any,
+		config?: AxiosRequestConfig
+	): Promise<Resonse<T>> {
+		return this.instance.post<Resonse<T>, Resonse<T>>(url, data, config)
 	}
 
-	patch<T>(url: string, data: any, config?: AxiosRequestConfig): Promise<T> {
-		return this.instance.patch(url, data, config)
+	patch<T = any>(
+		url: string,
+		data: any,
+		config?: AxiosRequestConfig
+	): Promise<Resonse<T>> {
+		return this.instance.patch<Resonse<T>, Resonse<T>>(url, data, config)
 	}
 
-	delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-		return this.instance.delete(url, config)
+	delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<Resonse<T>> {
+		return this.instance.delete<Resonse<T>, Resonse<T>>(url, config)
 	}
 }
 
