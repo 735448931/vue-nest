@@ -30,6 +30,32 @@ export class RedisService implements OnModuleDestroy {
     return this.client.del(key);
   }
 
+  async hset(key: string, value: Record<string, string | number>) {
+    const payload = Object.entries(value).reduce<Record<string, string>>(
+      (acc, [field, fieldValue]) => {
+        acc[field] = String(fieldValue);
+        return acc;
+      },
+      {}
+    );
+    return this.client.hset(key, payload);
+  }
+
+  async hgetall(key: string) {
+    const data = await this.client.hgetall(key);
+    if (!data || Object.keys(data).length === 0) {
+      return null;
+    }
+    return data;
+  }
+
+  async expire(key: string, ttlSeconds: number) {
+    if (ttlSeconds <= 0) {
+      return;
+    }
+    await this.client.expire(key, ttlSeconds);
+  }
+
   async onModuleDestroy() {
     try {
       await this.client.quit();

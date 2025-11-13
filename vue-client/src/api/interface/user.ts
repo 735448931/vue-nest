@@ -1,21 +1,8 @@
-export type LoginType = 'account' | 'phone' | 'email' | 'github'
 
-export interface AccountLoginParams {
+export interface LoginParams {
 	username: string
 	password: string
-	type: 'account'
 }
-
-
-export interface EmailLoginParams {
-	email: string
-	code: string
-	type: 'email'
-}
-
-export type LoginParams =
-	| AccountLoginParams
-	| EmailLoginParams
 
 export interface RegisterParams {
 	username: string

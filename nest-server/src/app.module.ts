@@ -19,9 +19,13 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestLogInterceptor } from './interceptor/request-log.interceptor';
 import { RedisModule } from './modules/redis/redis.module';
 import { EmailModule } from './modules/email/email.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
 	imports: [
+		HttpModule.register({
+			timeout: 5000,
+		}),
 		ConfigModule.forRoot(),
 		UploadModule,
 		UserModule,

@@ -14,14 +14,13 @@ export class UserController {
 	private jwtService: JwtService
 
 
-
 	// 用户注册
 	@Post('register')
 	async register(@Body(ValidationPipe) user: RegisterDto) {
 		return await this.userService.register(user)
 	}
 
-
+	// 用户登录
 	@Post('login')
 	async login(
 		@Body(ValidationPipe) user: LoginDto,

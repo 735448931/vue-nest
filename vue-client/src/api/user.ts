@@ -13,3 +13,8 @@ export const registerApi = (registerParams: RegisterParams) => {
 export const getEmailCodeApi = (query: { email: string }) => {
 	return request.get<string>('/email/code', query)
 }
+
+// 登录后获取天气
+export const getWeatherApi = () => { 
+	return request.get('/weather')
+}

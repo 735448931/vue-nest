@@ -130,7 +130,6 @@ const handleAccountLogin = async () => {
 		await loginApi({
 			username: accountForm.username,
 			password: accountForm.password,
-			type: 'account'
 		})
         
 		ElMessage.success('登录成功')

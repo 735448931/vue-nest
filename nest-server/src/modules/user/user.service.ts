@@ -59,13 +59,6 @@ export class UserService {
 	}
 
 	async login(user: LoginDto) {
-		const { type } = user
-
-		if (type === LoginTypeEnum.Account) {
-			// 账号登录
-		} else if (type === LoginTypeEnum.Phone) {
-		} else if (type === LoginTypeEnum.Email) {
-		}
 
 		console.log('🍿🍿🍿🍿🍿user:', user)
 

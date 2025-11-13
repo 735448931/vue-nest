@@ -14,6 +14,7 @@
 
 <script setup lang="ts">
 import { uploadImageApi, uploadChunkApi, mergeChunkApi, uploadAliOssApi } from '@/api/upload'
+import { getWeatherApi } from '@/api/user'
 import type { UploadFile } from 'element-plus'
 import { onMounted } from 'vue'
 
@@ -63,8 +64,14 @@ const handleAliOss = async (uploadFile: UploadFile) => {
     await uploadAliOssApi(form)
 }
 
+const getWeather = async () => {
+    const res = await getWeatherApi()
+    console.log('🍿🍿🍿🍿🍿res:', res);
+}
+
 
 onMounted(() => {
+    getWeather()
 
     console.log('sse start--------');
     

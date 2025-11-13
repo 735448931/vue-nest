@@ -1,12 +1,33 @@
-import { BadRequestException, Body, Controller, FileTypeValidator, Get, HttpException, Inject, MaxFileSizeValidator, NotFoundException, ParseFilePipe, Post, Sse, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common'
+import {
+	BadRequestException,
+	Body,
+	Controller,
+	FileTypeValidator,
+	Get,
+	HttpException,
+	Inject,
+	MaxFileSizeValidator,
+	NotFoundException,
+	ParseFilePipe,
+	Post,
+	Sse,
+	UploadedFile,
+	UploadedFiles,
+	UseGuards,
+	UseInterceptors,
+	ValidationPipe
+} from '@nestjs/common'
 import { AppService } from './app.service'
 import { isInt, IsNotEmpty, max, MaxLength } from 'class-validator'
 // import { LoginGuard } from './login.guard'
 import { RequireLogin, RequirePermission } from './decorator/custom-decorator'
-import { Observable } from 'rxjs'
+import { firstValueFrom, Observable } from 'rxjs'
 import { randomUUID } from 'crypto'
 import * as qrcode from 'qrcode'
 import * as os from 'os'
+import { HttpService } from '@nestjs/axios'
+import { RedisService } from './modules/redis/redis.service'
+import dayjs from 'dayjs'
 export class Ooo {
 	@MaxLength(5)
 	name: string
@@ -17,13 +38,55 @@ export class Ooo {
 	hobbies: Array<string>
 }
 
-
 @Controller()
 export class AppController {
 	constructor(private readonly appService: AppService) {}
 
 	// @Inject(AppService)
 	// private appService:AppService
+
+	@Inject(HttpService)
+	private httpService: HttpService
+
+	@Inject(RedisService)
+	private redisService: RedisService
+
+	@Get('/weather')
+	async getWeather() {
+		const today = dayjs().format('YYYY-MM-DD')
+		const weatherRedisKey = `weather:${today}`
+		const cached = await this.redisService.hgetall(weatherRedisKey)
+		if (cached) {
+			return cached
+		}
+
+		const { data } = await firstValueFrom(
+			this.httpService.get(
+				`https://geoapi.qweather.com/v2/city/lookup?location=dalian&key=7f1a0468afef4a5d9fafc92c3dcf7536`
+			)
+		)
+		const location = data.location[0]
+
+		const { data: weatherData } = await firstValueFrom(
+			this.httpService.get(
+				`https://api.qweather.com/v7/weather/7d?location=${location.id}&key=7f1a0468afef4a5d9fafc92c3dcf7536`
+			)
+		)
+
+		const todayWeather = {
+			fxDate: weatherData.daily[0].fxDate,
+			tempMin: weatherData.daily[0].tempMin,
+			tempMax: weatherData.daily[0].tempMax,
+			textDay: weatherData.daily[0].textDay,
+			textNight: weatherData.daily[0].textNight,
+			windScaleDay: weatherData.daily[0].windScaleDay,
+		}
+
+		await this.redisService.hset(weatherRedisKey, todayWeather)
+		await this.redisService.expire(weatherRedisKey, 24 * 60 * 60)
+
+		return todayWeather
+	}
 
 	@Get('/test')
 	getHello(): string {
