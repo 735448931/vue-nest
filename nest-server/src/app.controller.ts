@@ -28,6 +28,7 @@ import * as os from 'os'
 import { HttpService } from '@nestjs/axios'
 import { RedisService } from './modules/redis/redis.service'
 import dayjs from 'dayjs'
+import { ConfigService } from '@nestjs/config'
 export class Ooo {
 	@MaxLength(5)
 	name: string
@@ -50,6 +51,9 @@ export class AppController {
 
 	@Inject(RedisService)
 	private redisService: RedisService
+
+	@Inject(ConfigService)
+	private configService: ConfigService
 
 	@Get('/weather')
 	async getWeather() {
@@ -89,7 +93,7 @@ export class AppController {
 	}
 
 	@Get('/test')
-	getHello(): string {
+	getHello(): string {		
 		return this.appService.getHello()
 	}
 	@Post('/test-post')

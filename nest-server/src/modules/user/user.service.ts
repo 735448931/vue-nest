@@ -20,6 +20,12 @@ export class UserService {
 	@InjectRepository(User)
 	private userRepository: Repository<User>
 
+	@InjectRepository(Role)
+	private roleRepository: Repository<Role>
+
+	@InjectRepository(Permission)
+	private permissionRepository: Repository<Permission>
+
 	@InjectEntityManager()
 	private manager: EntityManager
 
@@ -38,12 +44,11 @@ export class UserService {
 			throw new BadRequestException('用户已存在')
 		}
 
-		const codeKey =  await this.redisService.get(`code_${user.email}:S`)
+		const codeKey = await this.redisService.get(`code_${user.email}:S`)
 
 		if (codeKey && codeKey !== user.code) {
 			throw new BadRequestException('验证码错误')
 		}
-
 
 		const newUser = new User()
 		newUser.username = user.username
@@ -59,29 +64,62 @@ export class UserService {
 	}
 
 	async login(user: LoginDto) {
-
 		console.log('🍿🍿🍿🍿🍿user:', user)
 
-		const foundUser = await this.userRepository.findOneBy({
-			username: user.username
+		const foundUser = await this.userRepository.findOne({
+			where: {
+				username: user.username
+			},
+			relations:['roles','roles.permissions']
 		})
-		// const foundUser = await this.manager.findOne(User, {
-		// 	where: {
-		// 		username: user.username
-		// 	},
-		// 	// relations: {
-		// 	// 	roles: true
-		// 	// }
-		// })
 
 		if (!foundUser) {
 			throw new HttpException('用户名不存在', 200)
 		}
+		
 		if (foundUser.password !== md5(user.password)) {
 			throw new HttpException('密码错误', 200)
 		}
 
 		return foundUser
+	}
+
+	async initData() {
+		const user1 = new User()
+		user1.username = 'zhangsan'
+		user1.password = md5('111111')
+		user1.email = 'xxx@xx.com'
+		user1.isAdmin = true
+		user1.phoneNumber = '13233323333'
+
+		const user2 = new User()
+		user2.username = 'lisi'
+		user2.password = md5('111111')
+		user2.email = 'yy@yy.com'
+
+		const role1 = new Role()
+		role1.name = '管理员'
+
+		const role2 = new Role()
+		role2.name = '普通用户'
+
+		const permission1 = new Permission()
+		permission1.code = 'ccc'
+		permission1.description = '访问 ccc 接口'
+
+		const permission2 = new Permission()
+		permission2.code = 'ddd'
+		permission2.description = '访问 ddd 接口'
+
+		user1.roles = [role1]
+		user2.roles = [role2]
+
+		role1.permissions = [permission1, permission2]
+		role2.permissions = [permission1]
+
+		await this.permissionRepository.save([permission1, permission2])
+		await this.roleRepository.save([role1, role2])
+		await this.userRepository.save([user1, user2])
 	}
 
 	async findRolesByIds(roleIds: number[]) {

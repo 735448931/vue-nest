@@ -26,7 +26,10 @@ import { HttpModule } from '@nestjs/axios';
 		HttpModule.register({
 			timeout: 5000,
 		}),
-		ConfigModule.forRoot(),
+		ConfigModule.forRoot({
+			isGlobal: true,
+			envFilePath:'src/.env.development'
+		}),
 		UploadModule,
 		UserModule,
 		WinstonModule.forRootAsync({

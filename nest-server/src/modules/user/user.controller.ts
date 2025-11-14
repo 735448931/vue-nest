@@ -13,7 +13,6 @@ export class UserController {
 	@Inject(JwtService)
 	private jwtService: JwtService
 
-
 	// 用户注册
 	@Post('register')
 	async register(@Body(ValidationPipe) user: RegisterDto) {
@@ -26,7 +25,6 @@ export class UserController {
 		@Body(ValidationPipe) user: LoginDto,
 		@Res({ passthrough: true }) res: Response
 	) {
-		console.log('🍿🍿🍿🍿🍿user:', user)
 
 		const foundUser = await this.userService.login(user)
 
@@ -41,10 +39,16 @@ export class UserController {
 			// 	}
 			// })
 			// res.setHeader('token', token)
-			return 'login success'
+			return foundUser
 		} else {
 			return 'login fail'
 		}
+	}
+
+	@Get('init-data')
+	async initData() {
+		await this.userService.initData()
+		return 'done'
 	}
 
 	@Post()
