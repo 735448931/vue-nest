@@ -1,5 +1,5 @@
 <template>
-    <el-upload :auto-upload="false" :on-change="handleImageChange" drag>
+    <!-- <el-upload :auto-upload="false" :on-change="handleImageChange" drag>
         单张上传
     </el-upload>
 
@@ -9,14 +9,32 @@
 
     <el-upload :auto-upload="false" :on-change="handleAliOss" drag>
         上传到阿里云
-    </el-upload>
+    </el-upload> -->
+
+
+    <el-input v-model="input" style="width: 240px" placeholder="Please input" />
+
+    <el-button @click="handleAsk1">发请求</el-button>
 </template>
 
 <script setup lang="ts">
+
+import { ask1Api } from '@/api/langchain'
 import { uploadImageApi, uploadChunkApi, mergeChunkApi, uploadAliOssApi } from '@/api/upload'
 import { getWeatherApi } from '@/api/user'
 import type { UploadFile } from 'element-plus'
 import { onMounted } from 'vue'
+
+
+
+import { ref } from 'vue'
+
+const input = ref('')
+
+const handleAsk1 = async () => {
+    const res = await ask1Api({ question: input.value })
+    console.log('🍿🍿🍿🍿🍿res:', res);
+}
 
 
 

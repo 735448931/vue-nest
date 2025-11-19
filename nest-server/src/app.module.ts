@@ -20,6 +20,7 @@ import { RequestLogInterceptor } from './interceptor/request-log.interceptor';
 import { RedisModule } from './modules/redis/redis.module';
 import { EmailModule } from './modules/email/email.module';
 import { HttpModule } from '@nestjs/axios';
+import { LangchainModule } from './modules/langchain/langchain.module';
 
 @Module({
 	imports: [
@@ -72,6 +73,7 @@ import { HttpModule } from '@nestjs/axios';
 		RedisModule,
 		CityModule,
 		EmailModule,
+		LangchainModule,
 	],
 	controllers: [AppController],
 	providers: [
