@@ -1,31 +1,39 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { LangchainService } from './langchain.service';
-import { ChatOpenAI } from '@langchain/openai';
+import { LangchainService, AIProvider } from './langchain.service';
 
 
 @Controller('langchain')
 export class LangchainController {
-  constructor(private readonly langchainService: LangchainService) { }
+	constructor(private readonly langchainService: LangchainService) {}
 
-  @Get('ask1')
-  async getAsk1(@Query('question') question: string) {
-		const model = new ChatOpenAI({
-			model: 'deepseek-chat',
-			apiKey: 'my-key',
-			configuration: {
-				baseURL: 'https://api.deepseek.com'
-			}
-    })
-    
-    const response: any = await model.invoke(question)
-    
+	@Get('providers')
+	getAllProviders() {
+		return {
+			available: this.langchainService.getAvailableProviders(),
+			default: AIProvider.DEEPSEEK
+		}
+	}
 
-    console.log('🍿🍿🍿🍿🍿response:', response.content);
-    
+	@Get('invoke')
+	async getInvoke(
+		@Query('question') question: string,
+		@Query('provider') provider?: string
+	) {
+		// 根据查询参数选择供应商，默认使用 Deepseek
+		const aiProvider = (provider as AIProvider) || AIProvider.DEEPSEEK
+		const model = this.langchainService.getChatModel(aiProvider)
 
+		const response: any = await model.invoke(question)
 
-    return response
-    
+		return {
+			provider: aiProvider,
+			content: response.content,
+		}
+  }
+  
+  @Get('stream')
+  async getStream() {
+
   }
 
 }

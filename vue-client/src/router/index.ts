@@ -18,6 +18,11 @@ export const staticRoutes: RouteRecordRaw[] = [
 				path: '/dashboard',
 				name: 'Dashboard',
 				component: () => import('@/page/dashboard/index.vue')
+			},
+			{
+				path: '/langchain',
+				name:' Langchain',
+				component: () => import('@/page/langchain/index.vue')
 			}
 		]
 	}
