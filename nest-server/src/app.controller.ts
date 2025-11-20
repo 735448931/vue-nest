@@ -94,6 +94,9 @@ export class AppController {
 
 	@Get('/test')
 	getHello(): string {		
+
+		console.log('🍿🍿🍿🍿🍿:', this.configService.get('NEST_SERVER_PORT'),888)
+		
 		return this.appService.getHello()
 	}
 	@Post('/test-post')
