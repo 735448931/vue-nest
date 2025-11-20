@@ -6,6 +6,7 @@ import {
 	Get,
 	HttpException,
 	Inject,
+	MessageEvent,
 	MaxFileSizeValidator,
 	NotFoundException,
 	ParseFilePipe,
@@ -118,16 +119,26 @@ export class AppController {
 
 	// SSE数据推送
 	@Sse('stream')
-	stream() {
-		return new Observable((observer) => {
-			observer.next({ data: { msg: 'aaa' } })
+	stream(): Observable<MessageEvent> {
+		return new Observable<MessageEvent>((observer) => {
+			const send = (eventType: string, payload: Record<string, unknown>) => {
+				// 创建符合 MessageEvent 接口的对象
+				const event: MessageEvent = {
+					data: payload,
+					type: eventType,
+				} as MessageEvent
+
+				observer.next(event)
+			}
+
+			send('message', { msg: 'aaa' })
 
 			setTimeout(() => {
-				observer.next({ data: { msg: 'bbb' } })
+				send('change', { msg: 'bbb' })
 			}, 2000)
 
 			setTimeout(() => {
-				observer.next({ data: { msg: 'ccc' } })
+				send('message', { msg: 'ccc' })
 			}, 5000)
 		})
 	}

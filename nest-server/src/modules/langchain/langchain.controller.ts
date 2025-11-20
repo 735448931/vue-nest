@@ -32,8 +32,6 @@ export class LangchainController {
   }
   
   @Get('stream')
-  async getStream() {
-
-  }
-
+  async getStream() { }
+  
 }

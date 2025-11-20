@@ -101,10 +101,10 @@ onMounted(() => {
 
     console.log('sse start--------');
     
-    const eventSource = new EventSource('http://localhost:3000/api/stream')
-    eventSource.onmessage = ({ data }) => {
-        console.log('New ::::',JSON.parse(data));
-    }
+    // const eventSource = new EventSource('http://localhost:3000/api/stream')
+    // eventSource.onmessage = ({ data }) => {
+    //     console.log('New ::::',JSON.parse(data));
+    // }
 })
 
 </script>
