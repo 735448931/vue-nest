@@ -71,6 +71,17 @@ export class LangchainService {
 	}
 
 	/**
+	 * 获取流式响应以支持 SSE 推送
+	 */
+	async streamChatResponse(
+		question: string,
+		provider: AIProvider = AIProvider.DEEPSEEK
+	): Promise<AsyncIterable<unknown>> {
+		const model = this.getChatModel(provider);
+		return model.stream(question);
+	}
+
+	/**
 	 * 获取所有可用的供应商
 	 */
 	getAvailableProviders(): AIProvider[] {

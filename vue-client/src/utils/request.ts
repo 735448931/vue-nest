@@ -7,7 +7,7 @@ import type {
 	InternalAxiosRequestConfig
 } from 'axios'
 
-const config = { baseURL: import.meta.env.VITE_BASE_API, timeout: 10000 }
+const config = { baseURL: import.meta.env.VITE_BASE_API, timeout: 60000 }
 
 export interface Resonse<T = any> {
 	code: number

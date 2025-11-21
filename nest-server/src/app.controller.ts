@@ -126,7 +126,7 @@ export class AppController {
 				const event: MessageEvent = {
 					data: payload,
 					type: eventType,
-				} as MessageEvent
+				}
 
 				observer.next(event)
 			}

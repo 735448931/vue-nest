@@ -1,14 +1,15 @@
 import request from "@/utils/request"
+import type { ModelInfo } from "./interface/langchain"
 
 
 // 获取可用的语言模型提供商列表
 export const getAllProvidersApi = () => {
-	return request.get('/langchain/providers')
+	return request.get<ModelInfo>('/langchain/providers')
 }
 
 
-
-export const ask1Api = (data: { question: string }) => {
-	return request.get('/langchain/ask1', data)
+// invoke 接口
+export const invokeApi = (data: { question: string,provider?:string }) => {
+	return request.get('/langchain/invoke', data)
 }
 
