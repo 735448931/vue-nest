@@ -13,3 +13,6 @@ export const invokeApi = (data: { question: string,provider?:string }) => {
 	return request.get('/langchain/invoke', data)
 }
 
+export const invokeWithToolsApi = () => {
+	return request.get('/langchain/invoke-with-tools')
+}

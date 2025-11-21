@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ChatOpenAI } from '@langchain/openai';
+import { z } from 'zod'
+import { tool } from 'langchain';
 
 export enum AIProvider {
 	DEEPSEEK = 'deepseek',
@@ -10,10 +12,10 @@ export enum AIProvider {
 
 @Injectable()
 export class LangchainService {
-	private modelInstances: Map<AIProvider, ChatOpenAI> = new Map();
+	private modelInstances: Map<AIProvider, ChatOpenAI> = new Map()
 
 	constructor(private readonly configService: ConfigService) {
-		this.initializeModels();
+		this.initializeModels()
 	}
 
 	/**
@@ -30,7 +32,7 @@ export class LangchainService {
 					baseURL: this.configService.get<string>('DEEPSEEK_BASE_URL')
 				}
 			})
-		);
+		)
 
 		// 小爱 AI
 		// this.modelInstances.set(
@@ -54,7 +56,7 @@ export class LangchainService {
 					baseURL: this.configService.get<string>('BAILIAN_BASE_URL')
 				}
 			})
-		);
+		)
 	}
 
 	/**
@@ -63,11 +65,11 @@ export class LangchainService {
 	 * @returns ChatOpenAI实例
 	 */
 	getChatModel(provider: AIProvider = AIProvider.DEEPSEEK): ChatOpenAI {
-		const model = this.modelInstances.get(provider);
+		const model = this.modelInstances.get(provider)
 		if (!model) {
-			throw new Error(`AI provider ${provider} not found`);
+			throw new Error(`AI provider ${provider} not found`)
 		}
-		return model;
+		return model
 	}
 
 	/**
@@ -77,14 +79,62 @@ export class LangchainService {
 		question: string,
 		provider: AIProvider = AIProvider.DEEPSEEK
 	): Promise<AsyncIterable<unknown>> {
-		const model = this.getChatModel(provider);
-		return model.stream(question);
+		const model = this.getChatModel(provider)
+		return model.stream(question)
 	}
 
 	/**
 	 * 获取所有可用的供应商
 	 */
 	getAvailableProviders(): AIProvider[] {
-		return Array.from(this.modelInstances.keys());
+		return Array.from(this.modelInstances.keys())
+	}
+
+	async invokeWithTools(
+		provider: AIProvider = AIProvider.DEEPSEEK
+	): Promise<any> {
+		// 1. 定义一个简单的工具（例如：加法计算器）
+		const calculatorSchema = z.object({
+			a: z.number().describe('第一个数字'),
+			b: z.number().describe('第二个数字')
+		})
+
+		const calculatorTool = tool(
+			async ({ a, b }) => {
+				return `${a + b}`
+			},
+			{
+				name: 'calculator',
+				description: '计算两个数字的和',
+				schema: calculatorSchema
+			}
+		)
+
+		// 2. 获取模型实例并绑定工具
+		const model = this.getChatModel(provider)
+		const modelWithTools = model.bindTools([calculatorTool])
+
+		try {
+			// 3. 发送一个需要使用工具的问题
+			const result = await modelWithTools.invoke(
+				'请帮我计算 100 加 200 等于多少？'
+			)
+
+			// 4. 检查结果
+			if (result.tool_calls && result.tool_calls.length > 0) {
+				console.log('✅ 模型支持工具调用！')
+				console.log(
+					'工具调用详情:',
+					JSON.stringify(result.tool_calls, null, 2)
+				)
+				return { supported: true, tool_calls: result.tool_calls }
+			} else {
+				console.log('❌ 模型未调用工具，可能不支持或未识别意图。')
+				return { supported: false, response: result.content }
+			}
+		} catch (error) {
+			console.error('❌ 测试过程中发生错误:', error)
+			return { supported: false, error }
+		}
 	}
 }

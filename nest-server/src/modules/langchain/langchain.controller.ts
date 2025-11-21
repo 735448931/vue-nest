@@ -22,14 +22,14 @@ export class LangchainController {
 	) {
 		// 根据查询参数选择供应商，默认使用 Deepseek
 		const aiProvider = (provider as AIProvider) || AIProvider.DEEPSEEK
-    
+
 		const model = this.langchainService.getChatModel(aiProvider)
 
 		const response: any = await model.invoke(question)
 
 		return {
 			provider: aiProvider,
-			content: response.content,
+			content: response.content
 		}
 	}
 
@@ -39,37 +39,37 @@ export class LangchainController {
 		@Query('provider') provider?: string
 	): Observable<MessageEvent> {
 		if (!question) {
-			throw new BadRequestException('question is required');
+			throw new BadRequestException('question is required')
 		}
 
-		const aiProvider = (provider as AIProvider) || AIProvider.DEEPSEEK;
+		const aiProvider = (provider as AIProvider) || AIProvider.DEEPSEEK
 
 		return new Observable<MessageEvent>((observer) => {
-			let stream: any = null;
+			let stream: any = null
 
 			const processStream = async () => {
 				try {
 					stream = await this.langchainService.streamChatResponse(
 						question,
 						aiProvider
-					);
+					)
 
 					for await (const chunk of stream) {
-						if (observer.closed) break;
+						if (observer.closed) break
 
-						const content = this.extractChunkText(chunk);
+						const content = this.extractChunkText(chunk)
 						if (content) {
 							observer.next({
 								data: { provider: aiProvider, content }
-							});
+							})
 						}
 					}
 
 					if (!observer.closed) {
 						observer.next({
 							data: { provider: aiProvider, done: true }
-						});
-						observer.complete();
+						})
+						observer.complete()
 					}
 				} catch (error: any) {
 					if (!observer.closed) {
@@ -79,41 +79,57 @@ export class LangchainController {
 								provider: aiProvider,
 								message: error?.message || 'Stream failed'
 							}
-						});
-						observer.complete();
+						})
+						observer.complete()
 					}
 				}
-			};
+			}
 
-			processStream();
+			processStream()
 
 			return () => {
 				if (stream?.cancel && typeof stream.cancel === 'function') {
-					stream.cancel('client disconnected').catch(() => {});
+					stream.cancel('client disconnected').catch(() => {})
 				}
-			};
-		});
+			}
+		})
 	}
 
 	private extractChunkText(chunk: unknown): string {
 		if (!chunk) {
-			return '';
+			return ''
 		}
-		const content = (chunk as any)?.content ?? (chunk as any)?.message?.content;
+		const content =
+			(chunk as any)?.content ?? (chunk as any)?.message?.content
 		if (typeof content === 'string') {
-			return content;
+			return content
 		}
 		if (Array.isArray(content)) {
 			return content
 				.map((part) => {
 					if (typeof part === 'string') {
-						return part;
+						return part
 					}
-					return part?.text ?? '';
+					return part?.text ?? ''
 				})
-				.join('');
+				.join('')
 		}
-		return '';
+		return ''
 	}
-  
+
+	@Get('invoke-with-tools')
+	async getInvokeWithTools(
+		@Query('question') question: string,
+		@Query('provider') provider?: string
+	) {
+		const aiProvider = (provider as AIProvider) || AIProvider.DEEPSEEK
+
+		const response = await this.langchainService.invokeWithTools(aiProvider)
+
+
+		return {
+			provider: aiProvider,
+			content: response
+		}
+	}
 }

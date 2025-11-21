@@ -23,14 +23,17 @@
         </div>
         <div style="white-space: pre-wrap;">结果:{{ streamRes }}</div>
     </div>
+
+    <div>
+        <el-button @click="temptest">临时测试</el-button>
+    </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { getAllProvidersApi, invokeApi } from '@/api/langchain';
+import { getAllProvidersApi, invokeApi, invokeWithToolsApi } from '@/api/langchain';
 import type { ModelInfo } from '@/api/interface/langchain';
 import { sseManager } from '@/utils/sse';
-import { pa } from 'element-plus/es/locales.mjs';
 
 const inputInvoke = ref()
 const streamInvoke = ref()
@@ -50,6 +53,13 @@ const handleInvoke = async () => {
     })
     console.log('🍿🍿🍿🍿🍿data:', data);
     invokeRes.value = data
+}
+
+const temptest = async() => {
+    const result = await invokeWithToolsApi()
+
+    console.log('🍿🍿🍿🍿🍿result:', result);
+    
 }
 
 // const handleStream = () => {
