@@ -17,6 +17,7 @@ import useChatStore from '@/store/chat'
 import { gsap } from 'gsap'
 import ChatList from './ChatList.vue'
 import ChatDetail from './ChatDetail.vue'
+import { chatUserListApi } from '@/api/chat'
 
 
 // 组件引用
@@ -26,33 +27,6 @@ const chatDetailComponentRef = ref<InstanceType<typeof ChatDetail>>()
 
 const chatStore = useChatStore()
 
-// 模拟用户列表数据
-const userList = ref([
-    {
-        id: 1,
-        name: '张三',
-        avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-        lastMessage: '在吗？',
-        lastTime: '10:30',
-        unread: 2
-    },
-    {
-        id: 2,
-        name: '李四',
-        avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-        lastMessage: '好的，知道了',
-        lastTime: '昨天',
-        unread: 0
-    },
-    {
-        id: 3,
-        name: '王五',
-        avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-        lastMessage: '周末一起吃饭吧',
-        lastTime: '周一',
-        unread: 1
-    }
-])
 
 // 当前选中的用户
 const currentUser = ref<any>(null)
@@ -186,6 +160,20 @@ onMounted(() => {
             display: 'none'
         })
     }
+})
+
+// ===================== 数据 =====================
+const userList = ref<any>([])
+
+// 获取用户列表数据
+const getUserList = async () => {
+    const { data } = await chatUserListApi()
+    userList.value = data
+}
+
+// ===================== 生命周期 =====================
+onMounted(() => {
+    getUserList()
 })
 </script>
 

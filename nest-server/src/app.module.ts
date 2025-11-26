@@ -21,6 +21,7 @@ import { RedisModule } from './modules/redis/redis.module';
 import { EmailModule } from './modules/email/email.module';
 import { HttpModule } from '@nestjs/axios';
 import { LangchainModule } from './modules/langchain/langchain.module';
+import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
 	imports: [
@@ -74,6 +75,7 @@ import { LangchainModule } from './modules/langchain/langchain.module';
 		CityModule,
 		EmailModule,
 		LangchainModule,
+		ChatModule,
 	],
 	controllers: [AppController],
 	providers: [

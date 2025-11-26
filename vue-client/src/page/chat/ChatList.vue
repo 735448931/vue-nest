@@ -11,11 +11,11 @@
                 <div class="info">
                     <div class="name-time">
                         <span class="name">{{ user.name }}</span>
-                        <span class="time">{{ user.lastTime }}</span>
+                        <span class="time">{{ user.lastTime || '' }}</span>
                     </div>
-                    <div class="last-message">{{ user.lastMessage }}</div>
+                    <div class="last-message">{{ user.lastMessage || '' }}</div>
                 </div>
-                <div v-if="user.unread" class="unread-badge">{{ user.unread }}</div>
+                <div v-if="user.unread" class="unread-badge">{{ user.unread || '' }}</div>
             </div>
         </div>
     </div>
@@ -24,10 +24,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-// 定义 props
-defineProps<{
+
+interface Props {
     userList: any[]
-}>()
+}
+// ===================== 数据 =====================
+
+
+const props = defineProps<Props>()
+
 
 // 定义 emits
 const emit = defineEmits<{
