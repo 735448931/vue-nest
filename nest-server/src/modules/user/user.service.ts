@@ -44,11 +44,11 @@ export class UserService {
 			throw new BadRequestException('用户已存在')
 		}
 
-		const codeKey = await this.redisService.get(`code_${user.email}:S`)
+		// const codeKey = await this.redisService.get(`code_${user.email}:S`)
 
-		if (codeKey && codeKey !== user.code) {
-			throw new BadRequestException('验证码错误')
-		}
+		// if (codeKey && codeKey !== user.code) {
+		// 	throw new BadRequestException('验证码错误')
+		// }
 
 		const newUser = new User()
 		newUser.username = user.username

@@ -1,3 +1,4 @@
+import useUserStore from '@/store/user'
 import axios, { AxiosError } from 'axios'
 
 import type {
@@ -34,6 +35,11 @@ class RequestHttp {
 				// if (token) {
 				// 	config.headers['Authorization'] = `Bearer ${token}`
 				// }
+				const userStore = useUserStore()
+
+				if (userStore.userId) {
+					config.headers['user-id'] = userStore.userId
+				}
 
 				return config
 			},

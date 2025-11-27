@@ -83,6 +83,7 @@
 import { onBeforeUnmount, reactive, ref } from 'vue'
 import { ElMessage, type FormInstance, type FormItemRule, type FormRules } from 'element-plus'
 import { getEmailCodeApi, loginApi, registerApi } from '@/api/user'
+import useUserStore from '@/store/user'
 
 type TabName = 'account'  | 'third' | 'register'
 
@@ -91,6 +92,7 @@ const rememberMe = ref(true)
 const isSubmitting = ref(false)
 const countdown = ref(0)
 const registerSubmitting = ref(false)
+const userStore = useUserStore()
 let timer: ReturnType<typeof setInterval> | null = null
 
 const accountForm = reactive({
@@ -127,12 +129,19 @@ const handleAccountLogin = async () => {
 		isSubmitting.value = true
         await accountFormRef.value.validate()
 
-		await loginApi({
+		const {data} = await loginApi({
 			username: accountForm.username,
 			password: accountForm.password,
 		})
+
+		console.log('🍿🍿🍿🍿🍿data:', data);
+
+		userStore.setUserId(data.id)
+		
         
 		ElMessage.success('登录成功')
+
+		
 	} catch (error) {
 		ElMessage.error('请完善登录信息')
 	} finally {

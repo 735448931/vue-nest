@@ -5,6 +5,14 @@ import { ChatService } from './chat.service';
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
+
+  // 获取聊天用户列表
+  @Get('userList')
+  async getUserList(@Query('userId') userId: string) {
+    return await this.chatService.getUserList(userId)
+   }
+
+
   // 获取聊天用户列表（会话列表）
   @Get('conversations/:userId')
   async getConversations(@Param('userId') userId: string) {

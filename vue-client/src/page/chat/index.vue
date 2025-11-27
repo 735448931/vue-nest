@@ -5,8 +5,8 @@
             <ChatList ref="chatListComponentRef" :user-list="userList" @user-click="openChat" />
 
             <!-- 聊天详情页面 -->
-            <ChatDetail ref="chatDetailComponentRef" :current-user="currentUser" :messages="messages" @back="backToList"
-                @send-message="sendMessage" />
+            <!-- <ChatDetail ref="chatDetailComponentRef" :current-user="currentUser" :messages="messages" @back="backToList"
+                @send-message="sendMessage" /> -->
         </div>
     </el-drawer>
 </template>
