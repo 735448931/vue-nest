@@ -13,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { Permission } from './modules/user/entities/permission.entity';
 import { Role } from './modules/user/entities/role.entity';
+import { Message } from './modules/chat/entities/message.entity';
 // import { LoginGuard } from './login.guard';
 // import { PermissionGuard } from './permission.guard';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -59,7 +60,7 @@ import { ChatModule } from './modules/chat/chat.module';
 			database: 'nest-server',
 			synchronize: true,
 			logging: true,
-			entities: [User, City, Role, Permission],
+			entities: [User, City, Role, Permission, Message],
 			poolSize: 10,
 			connectorPackage: 'mysql2',
 			extra: {
