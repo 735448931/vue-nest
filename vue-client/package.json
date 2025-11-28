@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@nestjs/microservices": "^11.1.8",
+    "@tiptap/pm": "^3.11.1",
+    "@tiptap/starter-kit": "^3.11.1",
+    "@tiptap/vue-3": "^3.11.1",
     "axios": "^1.13.2",
     "element-plus": "^2.11.7",
     "gsap": "^3.13.0",

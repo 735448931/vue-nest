@@ -12,20 +12,22 @@
     </el-upload> -->
 
 
-    <el-input v-model="input" style="width: 240px" placeholder="Please input" />
+    <!-- <el-input v-model="input" style="width: 240px" placeholder="Please input" />
 
 
 
-    <el-button @click="goLangChain">跳转</el-button>
+    <el-button @click="goLangChain">跳转</el-button> -->
+    <TipTap v-model="text"></TipTap>
 </template>
 
 <script setup lang="ts">
 
 import { uploadImageApi, uploadChunkApi, mergeChunkApi, uploadAliOssApi } from '@/api/upload'
 import { getWeatherApi } from '@/api/user'
+import TipTap from '@/components/TipTap.vue'
 import type { UploadFile } from 'element-plus'
 import { onMounted } from 'vue'
-
+const text = ref('')
 
 
 import { ref } from 'vue'
