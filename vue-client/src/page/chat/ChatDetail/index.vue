@@ -1,78 +1,61 @@
 <template>
-    <div ref="chatDetailRef" class="chat-page chat-detail-page">
+    <div ref="chatDetailRef" class="chat-page">
         <div class="chat-header">
-            <span class="back-btn" @click="handleBack">
-                ←
-            </span>
-            <h3>{{ currentUser?.name }}</h3>
+            <span class="back-btn" @click="handleBack"> ← </span>
+            <span>{{ currentUser?.name }}</span>
+            <span>...</span>
         </div>
-        <div class="chat-content" ref="chatContentRef">
-            <div 
-                v-for="msg in messages" 
-                :key="msg.id"
-                class="message-item"
-                :class="{ 'is-self': msg.isSelf }"
-            >
-                <div class="avatar">
-                    <img :src="msg.avatar" :alt="msg.name" />
-                </div>
-                <div class="message-content">
-                    <div class="message-bubble">{{ msg.content }}</div>
-                </div>
-            </div>
+        <div class="chat-content" >
+            <MessageList></MessageList>
         </div>
-        <div class="chat-footer">
-            <el-input 
-                v-model="inputMessage"
-                placeholder="请输入消息..."
-                @keyup.enter="handleSendMessage"
-            >
-                <template #append>
-                    <el-button @click="handleSendMessage">发送</el-button>
-                </template>
-            </el-input>
+        <div class="chat-input-toolbar">
+            <InputToolBar></InputToolBar>
+        </div>
+        <div class="chat-input">
+            <MessageInput></MessageInput>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import MessageList from './MessageList.vue';
+import InputToolBar from './InputToolBar.vue';
+import MessageInput from './MessageInput.vue';
+import type { ChatUser } from '@/api/interface/chat';
 
-// 定义 props
-defineProps<{
-    currentUser: any
-    messages: any[]
-}>()
 
-// 定义 emits
-const emit = defineEmits<{
-    back: []
-    sendMessage: [message: string]
-}>()
+interface Props {
+    currentUser: ChatUser
+}
 
+interface Emits {
+    back:[]
+}
+
+// ===================== 数据 =====================
+const props = defineProps<Props>()
+const emits = defineEmits<Emits>()
 // 暴露 ref 给父组件
 const chatDetailRef = ref<HTMLElement>()
-const chatContentRef = ref<HTMLElement>()
+
+
+
+// ===================== 方法 =====================
+const handleBack = () => {
+    emits('back')
+}
+
+
+
+
+
 defineExpose({
     chatDetailRef,
-    chatContentRef
 })
 
-// 输入框内容
-const inputMessage = ref('')
 
-// 处理返回
-const handleBack = () => {
-    emit('back')
-}
 
-// 处理发送消息
-const handleSendMessage = () => {
-    if (!inputMessage.value.trim()) return
-    
-    emit('sendMessage', inputMessage.value)
-    inputMessage.value = ''
-}
 </script>
 
 <style scoped lang="scss">
@@ -82,23 +65,21 @@ const handleSendMessage = () => {
     left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
     flex-direction: column;
     background: white;
+    /* 默认隐藏，通过 GSAP 控制显示 */
+    display: none;
+    transform: translateX(100%);
 }
 
 .chat-header {
     display: flex;
-    align-items: center;
-    padding: 16px;
-    border-bottom: 1px solid #eee;
-    background: white;
-    
-    h3 {
-        margin: 0;
+        align-items: center;
+        justify-content: space-between;
+        height: 50px;
+        border-bottom: 1px solid #eee;
         font-size: 18px;
         font-weight: 500;
-    }
     
     .back-btn {
         margin-right: 12px;
@@ -111,6 +92,7 @@ const handleSendMessage = () => {
         }
     }
 }
+
 
 .chat-content {
     flex: 1;
@@ -192,9 +174,4 @@ const handleSendMessage = () => {
     }
 }
 
-.chat-footer {
-    padding: 16px;
-    border-top: 1px solid #eee;
-    background: white;
-}
 </style>

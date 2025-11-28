@@ -2,7 +2,7 @@ import { BadRequestException, HttpException, Inject, Injectable, InternalServerE
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm'
-import { EntityManager, In, Repository } from 'typeorm'
+import { EntityManager, In, Repository, Not } from 'typeorm'
 import { User } from './entities/user.entity'
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -70,13 +70,13 @@ export class UserService {
 			where: {
 				username: user.username
 			},
-			relations:['roles','roles.permissions']
+			relations: ['roles', 'roles.permissions']
 		})
 
 		if (!foundUser) {
 			throw new HttpException('用户名不存在', 200)
 		}
-		
+
 		if (foundUser.password !== md5(user.password)) {
 			throw new HttpException('密码错误', 200)
 		}
@@ -137,8 +137,17 @@ export class UserService {
 		this.manager.save(User, createUserDto)
 	}
 
-	findAll() {
-		return this.manager.find(User)
+	findAllExceptSelf(userId:number) {
+		if (userId) {
+			// 查询除了当前用户以外的所有用户
+			return this.userRepository.find({
+				where: {
+					id: Not(userId)
+				}
+			})
+		}
+		// 如果没有传 userId,返回所有用户
+		return this.userRepository.find()
 	}
 
 	findOne(id: number) {

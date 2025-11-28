@@ -6,6 +6,7 @@ import { RegisterDto } from './dto/register.dto'
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { type Response } from 'express'
+import { UserId } from 'src/decorator/custom-decorator';
 @Controller('user')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
@@ -56,9 +57,10 @@ export class UserController {
 		return this.userService.create(createUserDto)
 	}
 
-	@Get()
-	findAll() {
-		return this.userService.findAll()
+	// 获取除了自己的所有用户
+	@Get('allExceptSelf')
+	findAllExceptSelf(@UserId() userId: number) {
+		return this.userService.findAllExceptSelf(userId)
 	}
 
 	@Get(':id')

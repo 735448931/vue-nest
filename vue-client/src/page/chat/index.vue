@@ -1,12 +1,11 @@
 <template>
-    <el-drawer v-model="chatStore.chatDrawerShow" title="聊天" :with-header="false" modal size="500px">
+    <el-drawer v-model="chatStore.chatDrawerShow" :with-header="false" modal size="500px">
         <div class="chat-wrapper">
             <!-- 聊天列表页面 -->
-            <ChatList ref="chatListComponentRef" :user-list="userList" @user-click="openChat" />
+            <ChatList ref="chatListComponentRef" @handle-click="openChatDetail" />
 
             <!-- 聊天详情页面 -->
-            <!-- <ChatDetail ref="chatDetailComponentRef" :current-user="currentUser" :messages="messages" @back="backToList"
-                @send-message="sendMessage" /> -->
+            <ChatDetail ref="chatDetailComponentRef" :current-user="currentUser" @back="backToChatList" />
         </div>
     </el-drawer>
 </template>
@@ -15,55 +14,24 @@
 import { ref, onMounted } from 'vue'
 import useChatStore from '@/store/chat'
 import { gsap } from 'gsap'
-import ChatList from './ChatList.vue'
-import ChatDetail from './ChatDetail.vue'
-import { chatUserListApi } from '@/api/chat'
+import ChatList from './ChatList/index.vue'
+import ChatDetail from './ChatDetail/index.vue'
 
+// ===================== 数据 =====================
+const chatStore = useChatStore()
+
+// 当前选中的用户
+const currentUser = ref<any>(null)
 
 // 组件引用
 const chatListComponentRef = ref<InstanceType<typeof ChatList>>()
 const chatDetailComponentRef = ref<InstanceType<typeof ChatDetail>>()
 
 
-const chatStore = useChatStore()
-
-
-// 当前选中的用户
-const currentUser = ref<any>(null)
-
-// 消息列表
-const messages = ref<any[]>([])
-
-
-
+// ===================== 方法 =====================
 // 打开聊天详情
-const openChat = (user: any) => {
+const openChatDetail = (user: any) => {
     currentUser.value = user
-    
-    // 模拟加载消息
-    messages.value = [
-        {
-            id: 1,
-            content: '你好！',
-            isSelf: false,
-            avatar: user.avatar,
-            name: user.name
-        },
-        {
-            id: 2,
-            content: '你好，有什么事吗？',
-            isSelf: true,
-            avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-            name: '我'
-        },
-        {
-            id: 3,
-            content: user.lastMessage,
-            isSelf: false,
-            avatar: user.avatar,
-            name: user.name
-        }
-    ]
     
     // 使用 GSAP 实现页面切换动画
     const chatListRef = chatListComponentRef.value?.chatListRef
@@ -94,9 +62,8 @@ const openChat = (user: any) => {
         '<' // 与上一个动画同时开始
     )
 }
-
-// 返回列表
-const backToList = () => {
+// 返回聊天列表
+const backToChatList = () => {
     const chatListRef = chatListComponentRef.value?.chatListRef
     const chatDetailRef = chatDetailComponentRef.value?.chatDetailRef
     
@@ -132,48 +99,10 @@ const backToList = () => {
     currentUser.value = null
 }
 
-// 发送消息
-const sendMessage = (message: string) => {
-    messages.value.push({
-        id: Date.now(),
-        content: message,
-        isSelf: true,
-        avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-        name: '我'
-    })
-    
-    // 滚动到底部
-    setTimeout(() => {
-        const chatContentRef = chatDetailComponentRef.value?.chatContentRef
-        if (chatContentRef) {
-            chatContentRef.scrollTop = chatContentRef.scrollHeight
-        }
-    }, 100)
-}
-
-// 初始化页面位置
-onMounted(() => {
-    const chatDetailRef = chatDetailComponentRef.value?.chatDetailRef
-    if (chatDetailRef) {
-        gsap.set(chatDetailRef, {
-            x: '100%',
-            display: 'none'
-        })
-    }
-})
-
-// ===================== 数据 =====================
-const userList = ref<any>([])
-
-// 获取用户列表数据
-const getUserList = async () => {
-    const { data } = await chatUserListApi()
-    userList.value = data
-}
 
 // ===================== 生命周期 =====================
 onMounted(() => {
-    getUserList()
+    
 })
 </script>
 

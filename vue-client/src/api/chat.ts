@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 // 获取聊天用户列表
-export const chatUserListApi = (userId:string) => {
+export const chatUserListApi = () => {
 	return request.get('/chat/userList')
 }
 

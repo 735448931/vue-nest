@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 
 const useChatStore = defineStore('chat', () => {
 	const chatDrawerShow = ref(false)
@@ -17,12 +17,17 @@ const useChatStore = defineStore('chat', () => {
 		chatDrawerShow.value = !chatDrawerShow.value
 	}
 
+	const chatInfo = reactive({
+		messages:[]
+	})
+
 	// 返回需要暴露的状态和方法
 	return {
 		chatDrawerShow,
 		openDrawer,
 		closeDrawer,
-		toggleDrawer
+		toggleDrawer,
+		chatInfo,
 	}
 })
 
