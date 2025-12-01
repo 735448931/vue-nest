@@ -1,10 +1,10 @@
 <template>
     <div class="message-input-wrapper">
-        <el-scrollbar height="160px">
-                <div class="tiptap-container">
-                    <TipTap v-model="text" />
-                </div>
-        </el-scrollbar>
+        <div class="tiptap-container">
+            <el-scrollbar max-height="160px">
+                <TipTap v-model="text" />
+            </el-scrollbar>
+        </div>
     </div>
 </template>
 
@@ -38,7 +38,7 @@ const text = ref('')
 }
 
 :deep(.ProseMirror) {
-    min-height: 24px;
+    min-height: 63px; /* 3行高度: 14px * 1.5 * 3 */
     outline: none;
     font-size: 14px;
     line-height: 1.5;
