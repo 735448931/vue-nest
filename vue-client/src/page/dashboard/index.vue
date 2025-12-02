@@ -17,23 +17,52 @@
 
 
     <el-button @click="goLangChain">跳转</el-button> -->
-    <TipTap v-model="text"></TipTap>
+
+    <!-- <div>{{ answer }}</div> -->
+
+
+    <el-button @click="user1login">用户1登录</el-button>
+    <el-button @click="user2login">用户2登录</el-button>
+
+    <el-input v-model="user1input"></el-input>   <el-button @click="sendUser1Message">用户1发送消息</el-button>
+    <el-input v-model="user2input"></el-input>   <el-button @click="sendUser2Message">用户2发送消息</el-button>
 </template>
 
 <script setup lang="ts">
 
+import { getDocumentAnswerApi } from '@/api/langchain'
 import { uploadImageApi, uploadChunkApi, mergeChunkApi, uploadAliOssApi } from '@/api/upload'
 import { getWeatherApi } from '@/api/user'
 import TipTap from '@/components/TipTap.vue'
+import { useSSE } from '@/hooks/useSSE'
+import useChatStore from '@/store/chat'
 import type { UploadFile } from 'element-plus'
 import { onMounted } from 'vue'
-const text = ref('')
 
 
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+const chatStore = useChatStore()
+
+const user1input = ref('')
+const user2input = ref('')
+const sendUser1Message = async () => {
+  await chatStore.sendTextMessage('2', user1input.value)
+}
+
+const sendUser2Message = async () => {
+  await chatStore.sendTextMessage('1', user2input.value)
+}
 const input = ref('')
+
+const user1login = async () => {
+  await chatStore.login('1', 'eJyrVgrxCdYrSy1SslIy0jNQ0gHzM1NS80oy0zLBwoZQweKU7MSCgswUJStDMwMDQ0NTE0sDiExqRUFmUSpQ3NTU1MjAACpakpkLEjM3MzEzMTI3MIKakpkONLM8o6wiuSAjKCczq9TUx8A-Rj9cOyk01SLUszJFO7KiOL-UPNwzNNHXv7LI0VapFgBWrjC*')
+}
+
+const user2login = async () => {
+  await chatStore.login('2', 'eJyrVgrxCdYrSy1SslIy0jNQ0gHzM1NS80oy0zIhwlDB4pTsxIKCzBQlK0MzAwNDQ1MTSwOITGpFQWZRKlDc1NTUyMAAKlqSmQsSMzczMTMxNjC3hJqSmQ40MyrSPdI128g9zSTPtDhGPym-OCIor9Cs0KzAL60sPcvD3DfHzyfMwDulyKXcVqkWAD4KMDU_')
+}
 
 
 const router = useRouter()
@@ -92,7 +121,21 @@ const getWeather = async () => {
 }
 
 
-onMounted(() => {
+
+
+
+
+// const {
+//     answer,
+//     isLoading,
+//     error,
+//     fetchDocumentAnswer,
+//     closeConnection
+// } = useSSE()
+
+
+
+onMounted(async() => {
     getWeather()
 
     console.log('sse start--------');
@@ -101,6 +144,8 @@ onMounted(() => {
     // eventSource.onmessage = ({ data }) => {
     //     console.log('New ::::',JSON.parse(data));
     // }
+
+    // fetchDocumentAnswer('中国的ai发展面临什么问题?')
 })
 
 </script>

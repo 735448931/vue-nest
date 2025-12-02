@@ -20,13 +20,21 @@ export class UserController {
 		return await this.userService.register(user)
 	}
 
+	// 获取除了自己的所有用户
+	@Get('allExceptSelf')
+	findAllExceptSelf(@UserId() userId: number) {
+
+		console.log('请求走到这里了:', );
+		
+		return this.userService.findAllExceptSelf(userId)
+	}
+
 	// 用户登录
 	@Post('login')
 	async login(
 		@Body(ValidationPipe) user: LoginDto,
 		@Res({ passthrough: true }) res: Response
 	) {
-
 		const foundUser = await this.userService.login(user)
 
 		console.log('🍿🍿🍿🍿🍿foundUser:', foundUser)
@@ -55,12 +63,6 @@ export class UserController {
 	@Post()
 	create(@Body() createUserDto: CreateUserDto) {
 		return this.userService.create(createUserDto)
-	}
-
-	// 获取除了自己的所有用户
-	@Get('allExceptSelf')
-	findAllExceptSelf(@UserId() userId: number) {
-		return this.userService.findAllExceptSelf(userId)
 	}
 
 	@Get(':id')

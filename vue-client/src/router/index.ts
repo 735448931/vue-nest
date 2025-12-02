@@ -23,11 +23,6 @@ export const staticRoutes: RouteRecordRaw[] = [
 				path: '/langchain',
 				name: ' Langchain',
 				component: () => import('@/page/langchain/index.vue')
-			},
-			{
-				path: '/chat',
-				name: 'chat',
-				component: () => import('@/views/ChatDemo.vue')
 			}
 		]
 	}

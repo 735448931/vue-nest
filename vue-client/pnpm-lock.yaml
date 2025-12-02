@@ -11,6 +11,9 @@ importers:
       '@nestjs/microservices':
         specifier: ^11.1.8
         version: 11.1.8(@nestjs/common@11.1.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.8)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@tencentcloud/chat':
+        specifier: ^3.6.1
+        version: 3.6.1
       '@tiptap/pm':
         specifier: ^3.11.1
         version: 3.11.1
@@ -41,6 +44,9 @@ importers:
       socket.io-client:
         specifier: ^4.8.1
         version: 4.8.1
+      tim-upload-plugin:
+        specifier: ^1.4.3
+        version: 1.4.3
       vue:
         specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
@@ -567,6 +573,9 @@ packages:
 
   '@sxzz/popperjs-es@2.11.7':
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
+
+  '@tencentcloud/chat@3.6.1':
+    resolution: {integrity: sha512-YKftPfO2Mzo/RhSmUq2806FrB2ZB9AiuVmhHupxXtG6g8RMHTJICQulp6z+3bBzU7qko9BancR8rtvfdpDTpmQ==}
 
   '@tiptap/core@3.11.1':
     resolution: {integrity: sha512-q7uzYrCq40JOIi6lceWe2HuA8tSr97iPwP/xtJd0bZjyL1rWhUyqxMb7y+aq4RcELrx/aNRa2JIvLtRRdy02Dg==}
@@ -1346,6 +1355,9 @@ packages:
     resolution: {integrity: sha512-zWPTX96LVsA/eVYnqOM2+ofcdPqdS1dAF1LN4TS2/MWuUpfitd9ctTa87wt4xrYnZnkLtS69xpBdSxVBP5Rm6w==, tarball: https://registry.npmmirror.com/superjson/-/superjson-2.2.5.tgz}
     engines: {node: '>=16'}
 
+  tim-upload-plugin@1.4.3:
+    resolution: {integrity: sha512-3ZmbA36dr3eG9YGDon9MLBUtbNawYWkL+TBa+VS0Uviguc7PlVSOIVRG2C4irXX16slDT2Kj+HAZapp+Xqp2xg==}
+
   tinyglobby@0.2.15:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==, tarball: https://registry.npmmirror.com/tinyglobby/-/tinyglobby-0.2.15.tgz}
     engines: {node: '>=12.0.0'}
@@ -1821,6 +1833,8 @@ snapshots:
   '@socket.io/component-emitter@3.1.2': {}
 
   '@sxzz/popperjs-es@2.11.7': {}
+
+  '@tencentcloud/chat@3.6.1': {}
 
   '@tiptap/core@3.11.1(@tiptap/pm@3.11.1)':
     dependencies:
@@ -2727,6 +2741,8 @@ snapshots:
   superjson@2.2.5:
     dependencies:
       copy-anything: 4.0.5
+
+  tim-upload-plugin@1.4.3: {}
 
   tinyglobby@0.2.15:
     dependencies:

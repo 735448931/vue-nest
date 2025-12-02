@@ -13,7 +13,6 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { Permission } from './modules/user/entities/permission.entity';
 import { Role } from './modules/user/entities/role.entity';
-import { Message } from './modules/chat/entities/message.entity';
 // import { LoginGuard } from './login.guard';
 // import { PermissionGuard } from './permission.guard';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -22,7 +21,6 @@ import { RedisModule } from './modules/redis/redis.module';
 import { EmailModule } from './modules/email/email.module';
 import { HttpModule } from '@nestjs/axios';
 import { LangchainModule } from './modules/langchain/langchain.module';
-import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
 	imports: [
@@ -60,7 +58,7 @@ import { ChatModule } from './modules/chat/chat.module';
 			database: 'nest-server',
 			synchronize: true,
 			logging: true,
-			entities: [User, City, Role, Permission, Message],
+			entities: [User, City, Role, Permission],
 			poolSize: 10,
 			connectorPackage: 'mysql2',
 			extra: {
@@ -76,7 +74,6 @@ import { ChatModule } from './modules/chat/chat.module';
 		CityModule,
 		EmailModule,
 		LangchainModule,
-		ChatModule,
 	],
 	controllers: [AppController],
 	providers: [

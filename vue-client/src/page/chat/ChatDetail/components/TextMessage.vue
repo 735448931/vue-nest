@@ -5,7 +5,7 @@
         </div>
         <div class="message-content">
             <div class="message-bubble">
-                {{ props.message.content }}
+                {{ props.message.payload.text }}
             </div>
         </div>
     </div>

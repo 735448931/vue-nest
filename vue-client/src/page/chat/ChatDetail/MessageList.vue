@@ -1,8 +1,8 @@
 <template>
 	<div class="message-list">
-		<template v-for="(item, index) in messages" :key="item.id">
+		<template v-for="(item, index) in chatStore.messageData.messageList" :key="index">
 			<!-- 时间戳 - 根据条件显示 -->
-			<TimeStamp v-if="shouldShowTime(item, index)" :time="item.time" />
+			<!-- <TimeStamp v-if="shouldShowTime(item, index)" :time="item.time" /> -->
 
 			<!-- 消息组件 -->
 			<TextMessage :message="item" />
@@ -11,9 +11,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import TextMessage from './components/TextMessage.vue'
 import TimeStamp from './components/TimeStamp.vue'
+import useChatStore from '@/store/chat'
 
 // 消息数据类型
 interface Message {
@@ -25,57 +26,12 @@ interface Message {
 	time: string | number | Date
 }
 
+const chatStore = useChatStore()
+
 // 模拟消息数据
-const messages = ref<Message[]>([
-	{
-		id: 1,
-		content: '你好！',
-		isSelf: false,
-		avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-		name: '张三',
-		time: new Date('2024-01-20 09:00:00')
-	},
-	{
-		id: 2,
-		content: '你好，很高兴认识你！',
-		isSelf: true,
-		avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-		name: '我',
-		time: new Date('2024-01-20 09:01:00')
-	},
-	{
-		id: 3,
-		content: '最近在忙什么呢？',
-		isSelf: false,
-		avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-		name: '张三',
-		time: new Date('2024-01-20 09:02:00')
-	},
-	{
-		id: 4,
-		content: '在学习 Vue 和 Nest.js',
-		isSelf: true,
-		avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-		name: '我',
-		time: new Date('2024-01-20 09:10:00') // 间隔超过5分钟，会显示时间
-	},
-	{
-		id: 5,
-		content: '不错啊，加油！',
-		isSelf: false,
-		avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-		name: '张三',
-		time: new Date('2024-01-20 09:11:00')
-	},
-	{
-		id: 6,
-		content: '谢谢！一起进步',
-		isSelf: true,
-		avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-		name: '我',
-		time: new Date() // 当前时间
-	}
-])
+const messages = ref<any>([])
+
+
 
 /**
  * 判断是否应该显示时间戳

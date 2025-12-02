@@ -39,6 +39,7 @@
     "@types/qrcode": "^1.5.6",
     "ali-oss": "^6.23.0",
     "axios": "^1.13.2",
+    "chromadb": "^3.1.6",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "dayjs": "^1.11.19",

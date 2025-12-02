@@ -70,7 +70,7 @@ class RequestHttp {
 			params: query,
 			...config
 		}
-
+		
 		return this.instance.get<Resonse<T>, Resonse<T>>(url, _config)
 	}
 

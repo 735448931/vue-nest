@@ -7,19 +7,18 @@
         <div class="chat-list">
             <div v-for="user in userList" :key="user.id" class="chat-item" @click="handleUserClick(user)">
                 <div class="avatar">
-                    <img :src="user.avatar" :alt="user.name" />
+                    <img :src="user.avatar" />
                 </div>
                 <div class="info">
                     <div class="name-time">
-                        <span class="name">{{ user.name }}</span>
-                        <span class="time">{{ user.lastMessageTime }}</span>
+                        <span class="name">{{ user.username }}</span>
+                        <span class="time">{{ user.lastMessageTime || '10-22' }}</span>
                     </div>
-                    <div class="last-message">{{ user.lastMessage }}</div>
+                    <div class="last-message">{{ user.lastMessage || 'Ceshi' }}</div>
                 </div>
-                <!-- 未读消息数量徽章 -->
-                <div v-if="user.unreadCount > 0" class="unread-badge">
+                <!-- <div v-if="user.unreadCount > 0" class="unread-badge">
                     {{ user.unreadCount > 99 ? '99+' : user.unreadCount }}
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -27,7 +26,9 @@
 </template>
 
 <script setup lang="ts">
+import { chatUserListApi } from '@/api/chat';
 import type { ChatUser } from '@/api/interface/chat';
+import useUserStore from '@/store/user';
 import { onMounted, ref } from 'vue'
 
 interface Emits {
@@ -37,7 +38,7 @@ interface Emits {
 
 
 // ===================== 数据 =====================
-const userList = ref<ChatUser[]>([])
+const userList = ref<any[]>([])
 const emits = defineEmits<Emits>()
 // 暴露 ref 给父组件
 const chatListRef = ref<HTMLElement>()
@@ -45,28 +46,39 @@ const chatListRef = ref<HTMLElement>()
 
 // 获取用户列表
 const getUserList = async () => {
-    userList.value = [
-        {
-            id: 1,
-            name: '张三',
-            avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-            lastMessage: '你好！',
-            lastMessageTime: '10-27 18:30',
-            unreadCount: 2
-        },
-        {
-            id: 2,
-            name: '李四',
-            avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-            lastMessage: '我们明天见！',
-            lastMessageTime: '10-27 17:45',
-            unreadCount: 0
-        }
-    ]
+
+    const userStore = useUserStore()
+
+    const { data } = await chatUserListApi({ userId: userStore.userId })
+
+
+
+    userList.value = data
+
+
+    // userList.value = [
+    //     {
+    //         id: 1,
+    //         name: '张三',
+    //         avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+    //         lastMessage: '你好！',
+    //         lastMessageTime: '10-27 18:30',
+    //         unreadCount: 2
+    //     },
+    //     {
+    //         id: 2,
+    //         name: '李四',
+    //         avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+    //         lastMessage: '我们明天见！',
+    //         lastMessageTime: '10-27 17:45',
+    //         unreadCount: 0
+    //     }
+    // ]
 }
 
 // 处理用户点击-跳转详情
 const handleUserClick = (user: ChatUser) => {
+    console.log('点击了用户:', user);
     emits('handleClick', user)
 }
 
@@ -74,8 +86,8 @@ const handleUserClick = (user: ChatUser) => {
 
 
 // ===================== 生命周期 =====================
-onMounted(() => {
-    getUserList()
+onMounted(async() => {
+  await  getUserList()
 })
 
 defineExpose({

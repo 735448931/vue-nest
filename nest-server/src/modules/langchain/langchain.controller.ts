@@ -5,7 +5,46 @@ import { LangchainService, AIProvider } from './langchain.service';
 
 @Controller('langchain')
 export class LangchainController {
-	constructor(private readonly langchainService: LangchainService) {}
+	constructor(private readonly langchainService: LangchainService) { }
+	
+	// ===================== 根据文档中的内容返回答案 =====================
+	@Get('documentAnswer')
+	async getDocumentAnswer(@Query('question') question: string) {
+		return await this.langchainService.getDocumentAnswer(question)
+	}
+
+	// ===================== 使用 Observable 模式流式返回文档答案 =====================
+	@Sse('documentAnswerObservable')
+	getDocumentAnswerObservable(@Query('question') question: string): Observable<MessageEvent> {
+		if (!question) {
+			throw new BadRequestException('问题参数不能为空')
+		}
+
+		return new Observable((observer) => {
+			const subscription = this.langchainService
+				.getDocumentAnswerObservable(question)
+				.subscribe({
+					next: (chunk) => {
+						observer.next({
+							data: JSON.stringify(chunk)
+						} as MessageEvent)
+					},
+					error: (error) => {
+						console.error('Observable 处理错误:', error)
+						observer.error(error)
+					},
+					complete: () => {
+						observer.complete()
+					}
+				})
+
+			// 返回清理函数，当客户端断开连接时取消订阅
+			return () => {
+				subscription.unsubscribe()
+			}
+		})
+	}
+		
 
 	@Get('providers')
 	getAllProviders() {

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@nestjs/microservices": "^11.1.8",
+    "@tencentcloud/chat": "^3.6.1",
     "@tiptap/pm": "^3.11.1",
     "@tiptap/starter-kit": "^3.11.1",
     "@tiptap/vue-3": "^3.11.1",
@@ -20,6 +21,7 @@
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.7.1",
     "socket.io-client": "^4.8.1",
+    "tim-upload-plugin": "^1.4.3",
     "vue": "^3.5.22",
     "vue-router": "4"
   },

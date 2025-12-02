@@ -18,11 +18,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import MessageList from './MessageList.vue';
 import InputToolBar from './InputToolBar.vue';
 import MessageInput from './MessageInput.vue';
 import type { ChatUser } from '@/api/interface/chat';
+import useChatStore from '@/store/chat';
 
 
 interface Props {
@@ -36,12 +37,30 @@ interface Emits {
 // ===================== 数据 =====================
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
+const chatStore = useChatStore()
 // 暴露 ref 给父组件
 const chatDetailRef = ref<HTMLElement>()
 
 
 
 // ===================== 方法 =====================
+
+// 获取聊天记录
+const getMessageList = async () => {
+    if (!props.currentUser) return
+
+    console.log('调用获取聊天记录了++++++++++++');
+    
+    const result = await chatStore.changeConversation(props.currentUser.id.toString())
+
+
+}
+
+onMounted(() => {
+    getMessageList()
+})
+
+
 const handleBack = () => {
     emits('back')
 }
