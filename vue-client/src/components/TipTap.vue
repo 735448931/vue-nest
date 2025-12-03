@@ -33,6 +33,11 @@ watch(modelValue, (value) => {
 
     editor.value.commands.setContent(value)
 })
+
+// 暴露 editor 给父组件
+defineExpose({
+    editor
+})
 </script>
 
 <style scoped>

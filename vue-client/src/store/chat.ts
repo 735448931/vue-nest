@@ -3,11 +3,15 @@ import { reactive, ref } from 'vue'
 import TencentCloudChat, { Message } from '@tencentcloud/chat'
 import TIMUploadPlugin from 'tim-upload-plugin'
 import useUserStore from './user'
+// @ts-ignore
+import LibGenerateTestUserSig from '@/utils/lib-generate-test-usersig-es.min.js'
 
 // 腾讯云即时通信 IM SDK 配置
 const options = {
 	SDKAppID: 1600115490
 }
+
+const secretKey = '1e09080518204bf956eeb692c56027402b82000993c792083a1c9d64cd51f384'
 const chat = TencentCloudChat.create(options)
 chat.setLogLevel(3)
 chat.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin })
@@ -81,7 +85,19 @@ const useChatStore = defineStore('chat', () => {
 	})
 
 	// 登录
-	async function login(userId: string, userSig: string) {
+	async function login() {
+
+		const userStore = useUserStore()
+		const userId = userStore.userId.toString()
+
+		// 生成 userSig
+		const generator = new LibGenerateTestUserSig(
+			options.SDKAppID,
+			secretKey,
+			604800
+		)
+		const userSig = generator.genTestUserSig(userId)
+
 		const result = await chat.login({ userID: userId, userSig: userSig })
 		imIsLogin.value = true
 		return result

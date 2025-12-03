@@ -84,6 +84,8 @@ import { onBeforeUnmount, reactive, ref } from 'vue'
 import { ElMessage, type FormInstance, type FormItemRule, type FormRules } from 'element-plus'
 import { getEmailCodeApi, loginApi, registerApi } from '@/api/user'
 import useUserStore from '@/store/user'
+import { router } from '@/router'
+import useChatStore from '@/store/chat'
 
 type TabName = 'account'  | 'third' | 'register'
 
@@ -140,6 +142,11 @@ const handleAccountLogin = async () => {
 		
         
 		ElMessage.success('登录成功')
+
+		router.push('/dashboard')
+
+		const chatStore = useChatStore()
+		await chatStore.login()
 
 		
 	} catch (error) {

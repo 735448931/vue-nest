@@ -3,7 +3,7 @@
         <div class="input-container">
             <div class="tiptap-container">
                 <el-scrollbar max-height="160px">
-                    <TipTap v-model="text" />
+                    <TipTap v-model="text" ref="tipTapRef"/>
                 </el-scrollbar>
             </div>
             <button 
@@ -21,26 +21,141 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import useChatStore from '@/store/chat';
+import { ref, useTemplateRef } from 'vue';
 
-const emit = defineEmits<{
-    (e: 'send', text: string): void
-}>()
 
 const text = ref('')
+const tiptapRef = useTemplateRef('tipTapRef')
 
-const handleSend = () => {
+const chatStore = useChatStore()
+
+const handleSend = async () => {
     if (!text.value) return
 
-    console.log('🍿🍿🍿🍿🍿text.value:', text.value);
+    const charId = chatStore.conversation.chatID!
 
+    const editorJSON = tiptapRef.value!.editor.getJSON()
+
+    const content:any = []
+    handleEditorContent(editorJSON, content)
+
+    if (
+        content.length > 0 &&
+        content[content.length - 1] &&
+        content[content.length - 1]?.type === 'text' &&
+        content[content.length - 1]?.payload?.text?.endsWith('\n')
+    ) {
+        const text = content[content.length - 1].payload.text
+        content[content.length - 1].payload.text = text?.substring(0, text.lastIndexOf('\n'))
+    }
+
+    console.log('🍿🍿🍿🍿🍿content:', content);
+
+    content.forEach((item: any) => {
+        if (item.type === 'text') {
+            chatStore.sendTextMessage(chatStore.conversation.chatID!,item.payload.text)
+        }
+    })
     text.value = ''
 
-    // 追加一条消息 
-
-    // 发起请求
-    
 }
+
+// ===================== 直接粘贴来的 =====================
+const fileMap = new Map<string, any>()
+
+interface ITipTapEditorContent {
+    type: 'text' | 'image' | 'video' | 'file'
+    payload: {
+        text?: string
+        file?: File
+        atUserList?: string[]
+    }
+}
+
+
+function getEditorContent(): Array<ITipTapEditorContent> {
+    const editorJSON = tiptapRef.value!.editor?.getJSON()
+    const content: Array<ITipTapEditorContent> = []
+    handleEditorContent(editorJSON as any, content)
+    if (
+        content.length > 0 &&
+        content[content.length - 1] &&
+        content[content.length - 1]?.type === 'text' &&
+        content[content.length - 1]?.payload?.text?.endsWith('\n')
+    ) {
+        const text = content[content.length - 1]!.payload.text
+        content[content.length - 1]!.payload.text = text?.substring(0, text.lastIndexOf('\n'))
+    }
+    return content
+}
+
+function handleEditorContent(root: any, content: Array<ITipTapEditorContent>) {
+    if (!root || !root.type) {
+        return
+    }
+    if (root.type !== 'text' && root.type !== 'custom-image' && root.type !== 'mention') {
+        if (root.type === 'paragraph') {
+            handleEditorNode(root, content)
+        }
+        if (root.content?.length) {
+            root.content.forEach((item: any) => {
+                handleEditorContent(item, content)
+            })
+        }
+        return
+    } else {
+        handleEditorNode(root, content)
+    }
+}
+
+function handleEditorNode(node: any, content: Array<ITipTapEditorContent>) {
+    // handle enter
+    if (node.type === 'paragraph') {
+        if (content.length > 0 && content[content.length - 1] && content[content.length - 1]?.type === 'text') {
+            content[content.length - 1]!.payload.text += '\n'
+        }
+    } else if (node.type === 'text' || (node.type === 'custom-image' && node?.attrs?.class === 'emoji')) {
+        // 处理 text 和 emoji
+        const text = node.type === 'text' ? node?.text : node?.attrs?.alt
+        if (content.length > 0 && content[content.length - 1] && content[content.length - 1]?.type === 'text') {
+            content[content.length - 1]!.payload.text += text
+        } else {
+            content.push({
+                type: 'text',
+                payload: { text: text }
+            })
+        }
+    } else if (node.type === 'custom-image' && node?.attrs?.class === 'normal') {
+        // 处理富文本图像
+        content.push({
+            type: 'image',
+            payload: { file: fileMap?.get(node?.attrs?.src) }
+        })
+    } else if (node.type === 'custom-image' && node?.attrs?.class === 'file') {
+        const file = fileMap?.get(node?.attrs?.src)
+        content.push({
+            type: file?.type?.includes('video') ? 'video' : 'file',
+            payload: { file }
+        })
+    } else if (node.type === 'mention') {
+        const text = '@' + node?.attrs?.label + ' '
+        if (content.length > 0 && content[content.length - 1] && content[content.length - 1]?.type === 'text') {
+            content[content.length - 1]!.payload.text += text
+        } else {
+            content.push({
+                type: 'text',
+                payload: { text: text }
+            })
+        }
+        if (content[content.length - 1]?.payload?.atUserList) {
+            content[content.length - 1]?.payload?.atUserList?.push(node?.attrs?.id)
+        } else {
+            content[content.length - 1]!.payload.atUserList = [node?.attrs?.id]
+        }
+    }
+}
+    
 </script>
 
 <style scoped lang="scss">

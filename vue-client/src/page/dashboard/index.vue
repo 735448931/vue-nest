@@ -20,12 +20,6 @@
 
     <!-- <div>{{ answer }}</div> -->
 
-
-    <el-button @click="user1login">用户1登录</el-button>
-    <el-button @click="user2login">用户2登录</el-button>
-
-    <el-input v-model="user1input"></el-input>   <el-button @click="sendUser1Message">用户1发送消息</el-button>
-    <el-input v-model="user2input"></el-input>   <el-button @click="sendUser2Message">用户2发送消息</el-button>
 </template>
 
 <script setup lang="ts">
@@ -47,29 +41,12 @@ const chatStore = useChatStore()
 
 const user1input = ref('')
 const user2input = ref('')
-const sendUser1Message = async () => {
-  await chatStore.sendTextMessage('2', user1input.value)
-}
 
-const sendUser2Message = async () => {
-  await chatStore.sendTextMessage('1', user2input.value)
-}
 const input = ref('')
-
-const user1login = async () => {
-  await chatStore.login('1', 'eJyrVgrxCdYrSy1SslIy0jNQ0gHzM1NS80oy0zLBwoZQweKU7MSCgswUJStDMwMDQ0NTE0sDiExqRUFmUSpQ3NTU1MjAACpakpkLEjM3MzEzMTI3MIKakpkONLM8o6wiuSAjKCczq9TUx8A-Rj9cOyk01SLUszJFO7KiOL-UPNwzNNHXv7LI0VapFgBWrjC*')
-}
-
-const user2login = async () => {
-  await chatStore.login('2', 'eJyrVgrxCdYrSy1SslIy0jNQ0gHzM1NS80oy0zIhwlDB4pTsxIKCzBQlK0MzAwNDQ1MTSwOITGpFQWZRKlDc1NTUyMAAKlqSmQsSMzczMTMxNjC3hJqSmQ40MyrSPdI128g9zSTPtDhGPym-OCIor9Cs0KzAL60sPcvD3DfHzyfMwDulyKXcVqkWAD4KMDU_')
-}
 
 
 const router = useRouter()
 
-const goLangChain = () => {
-    router.push('/langchain')
-}
 
 // 单张上传
 const handleImageChange = async (uploadFile: UploadFile) => {
