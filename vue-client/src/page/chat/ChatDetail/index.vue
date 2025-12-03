@@ -22,18 +22,13 @@ import { onMounted, ref } from 'vue'
 import MessageList from './MessageList.vue';
 import InputToolBar from './InputToolBar.vue';
 import MessageInput from './MessageInput.vue';
-import type { ChatUser } from '@/api/interface/chat';
 import useChatStore from '@/store/chat';
-
-
-interface Props {}
 
 interface Emits {
     back:[]
 }
 
 // ===================== 数据 =====================
-const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 const chatStore = useChatStore()
 // 暴露 ref 给父组件
@@ -45,6 +40,12 @@ const chatDetailRef = ref<HTMLElement>()
 
 // 获取聊天记录
 const getMessageList = async () => {
+
+    console.log('🍿🍿🍿🍿🍿chatStore.conversation.chatID:', chatStore.conversation.chatID === '-1');
+
+    if (chatStore.conversation.chatID === '-1') return
+    
+    
     if (!chatStore.conversation.chatID) return
     const result = await chatStore.changeConversation(chatStore.conversation.chatID.toString())
     console.log('🍿🍿🍿🍿🍿result:', result);
@@ -59,15 +60,9 @@ const handleBack = () => {
     emits('back')
 }
 
-
-
-
-
 defineExpose({
     chatDetailRef,
 })
-
-
 
 </script>
 

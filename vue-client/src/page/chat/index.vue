@@ -1,5 +1,5 @@
 <template>
-    <el-drawer v-model="chatStore.chatDrawerShow" :with-header="false" modal size="500px">
+    <el-drawer v-model="chatStore.chatDrawerShow" :with-header="false" modal size="500px" destroy-on-close @close="handleClose">
         <div class="chat-wrapper">
             <!-- 聊天列表页面 -->
             <ChatList ref="chatListRef" @handleClick="openChatDetail" />
@@ -78,6 +78,7 @@ const backToChatList = () => {
                 chatDetailDomRef.style.display = 'none'
             }
             chatStore.conversation.chatID = undefined
+            chatListRef.value?.getUserList()
         }
     })
     
@@ -93,6 +94,11 @@ const backToChatList = () => {
         },
         '<' // 与上一个动画同时开始
     )
+}
+
+const handleClose = () => {
+    // 关闭抽屉时重置聊天状态
+    chatStore.conversation.chatID = undefined
 }
 
 </script>

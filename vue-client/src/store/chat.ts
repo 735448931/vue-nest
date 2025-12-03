@@ -27,6 +27,7 @@ async function onSdkReady(event: any) {
 
 async function onMessageReceived(event: any) { 
 	console.log('收到消息', event.data)
+
 }
 
 async function onConversationListUpdated(event: { data: any }) {
@@ -72,7 +73,6 @@ const useChatStore = defineStore('chat', () => {
 		// 模糊搜索用户名称
 		queryString: '',
 		conversationMark: 0,
-		conversationRole: undefined as string | undefined,
 		conversationID: '',
 		// 聊天ID  对方
 		chatID: undefined as string | undefined,
@@ -83,13 +83,27 @@ const useChatStore = defineStore('chat', () => {
 	// 登录
 	async function login(userId: string, userSig: string) {
 		const result = await chat.login({ userID: userId, userSig: userSig })
-		
 		imIsLogin.value = true
-
-		console.log('🍿🍿🍿🍿🍿登录后返回的结果:', result);
-
 		return result
 	}
+	// 登出
+	async function logout() { 
+		resetData()
+		imIsLogin.value = false
+		await chat.logout()
+	}
+	
+	// 重置数据
+	function resetData() {
+		conversation.conversationID = ''
+		conversation.chatID = undefined
+		conversation.userID = undefined
+		conversation.currentConversation = {}
+		conversation.conversationList = []
+		conversation.queryString = ''
+		conversation.conversationMark = 0
+	}
+
 
 
 

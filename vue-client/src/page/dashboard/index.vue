@@ -145,7 +145,7 @@ onMounted(async() => {
     //     console.log('New ::::',JSON.parse(data));
     // }
 
-    // fetchDocumentAnswer('中国的ai发展面临什么问题?')
+    // fetchDocumentAnswer('今天的天气怎么样?')
 })
 
 </script>

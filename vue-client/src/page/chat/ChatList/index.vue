@@ -17,8 +17,8 @@
                     <div class="last-message">{{ user.lastMessage || 'Ceshi' }}</div>
                 </div>
                 <!-- <div v-if="user.unreadCount > 0" class="unread-badge">
-                    {{ user.unreadCount > 99 ? '99+' : user.unreadCount }}
-                </div> -->
+                        {{ user.unreadCount > 99 ? '99+' : user.unreadCount }}
+                    </div> -->
             </div>
         </div>
 
@@ -59,12 +59,14 @@ const handleClick = (chatId: string) => {
 
 
 // ===================== 生命周期 =====================
-onMounted(async() => {
-  await getUserList()
+onMounted(() => {
+    console.log('组件挂载了++++++++++++');
+     getUserList()
 })
 
 defineExpose({
-    chatListRef
+    chatListRef,
+    getUserList
 })
 
 
@@ -167,6 +169,50 @@ defineExpose({
         font-size: 12px;
         min-width: 18px;
         text-align: center;
+    }
+}
+
+// 骨架屏样式
+.skeleton-item {
+    .skeleton-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .skeleton-avatar {
+        width: 48px !important;
+        height: 48px !important;
+        border-radius: 4px !important;
+        flex-shrink: 0;
+        margin-right: 12px;
+    }
+
+    .skeleton-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .skeleton-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .skeleton-name {
+        width: 80px !important;
+        height: 18px !important;
+    }
+
+    .skeleton-time {
+        width: 50px !important;
+        height: 14px !important;
+    }
+
+    .skeleton-message {
+        width: 60% !important;
+        height: 14px !important;
     }
 }
 </style>
