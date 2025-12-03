@@ -72,12 +72,12 @@ const useChatStore = defineStore('chat', () => {
 		// 模糊搜索用户名称
 		queryString: '',
 		conversationMark: 0,
-		conversationRole: undefined,
+		conversationRole: undefined as string | undefined,
 		conversationID: '',
-		// 聊天ID
-		chatID: '',
-		// 用户ID
-		userID: 0
+		// 聊天ID  对方
+		chatID: undefined as string | undefined,
+		// 用户ID  自己
+		userID: undefined as number | undefined
 	})
 
 	// 登录
@@ -162,6 +162,7 @@ const useChatStore = defineStore('chat', () => {
 	return {
 		chatDrawerShow,
 		messageData,
+		conversation,
 		openDrawer,
 		closeDrawer,
 		toggleDrawer,

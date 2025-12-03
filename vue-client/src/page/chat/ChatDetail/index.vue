@@ -2,7 +2,7 @@
     <div ref="chatDetailRef" class="chat-page">
         <div class="chat-header">
             <span class="back-btn" @click="handleBack"> ← </span>
-            <span>{{ currentUser?.name }}</span>
+            <span>{{ chatStore.conversation.chatID }}</span>
             <span>...</span>
         </div>
         <div class="chat-content" >
@@ -26,9 +26,7 @@ import type { ChatUser } from '@/api/interface/chat';
 import useChatStore from '@/store/chat';
 
 
-interface Props {
-    currentUser: ChatUser
-}
+interface Props {}
 
 interface Emits {
     back:[]
@@ -47,13 +45,9 @@ const chatDetailRef = ref<HTMLElement>()
 
 // 获取聊天记录
 const getMessageList = async () => {
-    if (!props.currentUser) return
-
-    console.log('调用获取聊天记录了++++++++++++');
-    
-    const result = await chatStore.changeConversation(props.currentUser.id.toString())
-
-
+    if (!chatStore.conversation.chatID) return
+    const result = await chatStore.changeConversation(chatStore.conversation.chatID.toString())
+    console.log('🍿🍿🍿🍿🍿result:', result);
 }
 
 onMounted(() => {
