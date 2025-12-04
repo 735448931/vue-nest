@@ -5,7 +5,9 @@
 			<!-- <TimeStamp v-if="shouldShowTime(item, index)" :time="item.time" /> -->
 
 			<!-- 消息组件 -->
-			<TextMessage :message="item"  />
+			<TextMessage :message="item"  v-if="item.type === TencentCloudChat.TYPES.MSG_TEXT" />
+
+			<ImageMessage :message="item" v-if="item.type === TencentCloudChat.TYPES.MSG_IMAGE" ></ImageMessage>
 		</template>
 	</div>
 </template>
@@ -15,6 +17,8 @@ import { onMounted, ref } from 'vue'
 import TextMessage from './components/TextMessage.vue'
 import TimeStamp from './components/TimeStamp.vue'
 import useChatStore from '@/store/chat'
+import TencentCloudChat from '@tencentcloud/chat'
+import ImageMessage from './components/ImageMessage.vue'
 
 // 消息数据类型
 interface Message {
@@ -30,6 +34,11 @@ const chatStore = useChatStore()
 
 // 模拟消息数据
 const messages = ref<any>([])
+
+
+setTimeout(() => {
+	console.log('增加说明🌛获取的信息列表数据:',chatStore.messageData.messageList);
+}, 2000);
 
 
 

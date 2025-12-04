@@ -3,9 +3,24 @@
         <div class="input-container">
             <div class="tiptap-container">
                 <el-scrollbar max-height="160px">
-                    <TipTap v-model="text" ref="tipTapRef" />
+                    <TipTap v-model="text" ref="tipTapRef" @enter="handleSend" />
                 </el-scrollbar>
             </div>
+            <!-- 图片选择按钮 -->
+            <button class="image-button" @click="triggerImageSelect" title="选择图片">
+                <svg class="image-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                    <path d="M21 15L16 10L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <input 
+                type="file" 
+                ref="imageInputRef" 
+                accept="image/*" 
+                style="display: none" 
+                @change="handleImageSelect"
+            />
             <button class="send-button" @click="handleSend" :disabled="!text">
                 <svg class="send-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -25,13 +40,40 @@ import { ref, useTemplateRef } from 'vue';
 
 const text = ref('')
 const tiptapRef = useTemplateRef('tipTapRef')
+const imageInputRef = useTemplateRef<HTMLInputElement>('imageInputRef')
+
+// 存储选择的图片文件，用于发送
+const selectedImages = ref<Map<string, File>>(new Map())
 
 const chatStore = useChatStore()
 
+// 触发图片选择
+const triggerImageSelect = () => {
+    imageInputRef.value?.click()
+}
+
+// 处理图片选择
+const handleImageSelect = (event: Event) => {
+    const input = event.target as HTMLInputElement
+    const file = input.files?.[0]
+    
+    if (file) {
+        // 创建本地预览 URL
+        const previewUrl = URL.createObjectURL(file)
+        
+        // 存储文件引用
+        selectedImages.value.set(previewUrl, file)
+        
+        // 插入图片到编辑器
+        tiptapRef.value?.insertImage(previewUrl)
+        
+        // 清空 input，允许重复选择同一张图片
+        input.value = ''
+    }
+}
+
 const handleSend = async () => {
     if (!text.value) return
-
-    const charId = chatStore.conversation.chatID!
 
     const editorJSON = tiptapRef.value!.editor.getJSON()
 
@@ -48,13 +90,22 @@ const handleSend = async () => {
         content[content.length - 1].payload.text = text?.substring(0, text.lastIndexOf('\n'))
     }
 
-    content.forEach((item: any) => {
-        if (item.type === 'text') {
-            chatStore.sendTextMessage(chatStore.conversation.chatID!,item.payload.text)
+    // 发送消息
+    for (const item of content) {
+        if (item.type === 'text' && item.payload.text) {
+            await chatStore.sendTextMessage(chatStore.conversation.chatID!, item.payload.text)
+        } else if (item.type === 'image' && item.payload.file) {
+            await chatStore.sendImageMessage(chatStore.conversation.chatID!, item.payload.file)
         }
+    }
+    
+    // 清理图片预览 URL
+    selectedImages.value.forEach((_, url) => {
+        URL.revokeObjectURL(url)
     })
+    selectedImages.value.clear()
+    
     text.value = ''
-
 }
 
 // ===================== 直接粘贴来的 =====================
@@ -75,7 +126,7 @@ function handleEditorContent(root: any, content: Array<ITipTapEditorContent>) {
     if (!root || !root.type) {
         return
     }
-    if (root.type !== 'text' && root.type !== 'custom-image' && root.type !== 'mention') {
+    if (root.type !== 'text' && root.type !== 'custom-image' && root.type !== 'mention' && root.type !== 'image') {
         if (root.type === 'paragraph') {
             handleEditorNode(root, content)
         }
@@ -105,6 +156,16 @@ function handleEditorNode(node: any, content: Array<ITipTapEditorContent>) {
             content.push({
                 type: 'text',
                 payload: { text: text }
+            })
+        }
+    } else if (node.type === 'image') {
+        // 处理 TipTap Image 扩展的图片
+        const src = node?.attrs?.src
+        const file = selectedImages.value.get(src)
+        if (file) {
+            content.push({
+                type: 'image',
+                payload: { file }
             })
         }
     } else if (node.type === 'custom-image' && node?.attrs?.class === 'normal') {
@@ -173,6 +234,36 @@ function handleEditorNode(node: any, content: Array<ITipTapEditorContent>) {
 .tiptap-container {
     flex: 1;
     min-width: 0;
+}
+
+.image-button {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: #f0f2f5;
+    color: #606266;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        background: #e4e7ed;
+        color: #409eff;
+        transform: translateY(-2px) scale(1.05);
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    .image-icon {
+        width: 20px;
+        height: 20px;
+    }
 }
 
 .send-button {

@@ -201,6 +201,9 @@ const useChatStore = defineStore('chat', () => {
 			nextReqMessageID: messageData.nextReqMessageID || undefined
 		})
 
+		console.log('🍿🍿🍿🍿🍿data:聊天消息列表数据', data);
+		
+
 		const { messageList, nextReqMessageID, isCompleted } = data
 
 		messageData.messageList = [
@@ -232,6 +235,7 @@ const useChatStore = defineStore('chat', () => {
 		toggleDrawer,
 		login,
 		sendTextMessage,
+		sendImageMessage,
 		changeConversation
 	}
 })

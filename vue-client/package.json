@@ -9,8 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
     "@nestjs/microservices": "^11.1.8",
     "@tencentcloud/chat": "^3.6.1",
+    "@tiptap/extension-image": "^3.12.1",
     "@tiptap/pm": "^3.11.1",
     "@tiptap/starter-kit": "^3.11.1",
     "@tiptap/vue-3": "^3.11.1",
