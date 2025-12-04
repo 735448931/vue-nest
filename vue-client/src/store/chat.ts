@@ -59,6 +59,8 @@ async function onMessageReceived(event: any) {
 
 		if (message.type === TencentCloudChat.TYPES.MSG_TEXT) {
 			chatStore.messageData.messageList.push(message)
+		} else if (message.type === TencentCloudChat.TYPES.MSG_IMAGE) {
+			chatStore.messageData.messageList.push(message)
 		}
 	})
 }
