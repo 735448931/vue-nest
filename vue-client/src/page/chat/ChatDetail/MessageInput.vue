@@ -3,17 +3,15 @@
         <div class="input-container">
             <div class="tiptap-container">
                 <el-scrollbar max-height="160px">
-                    <TipTap v-model="text" ref="tipTapRef"/>
+                    <TipTap v-model="text" ref="tipTapRef" />
                 </el-scrollbar>
             </div>
-            <button 
-                class="send-button" 
-                @click="handleSend" 
-                :disabled="!text"
-            >
+            <button class="send-button" @click="handleSend" :disabled="!text">
                 <svg class="send-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
                 </svg>
             </button>
         </div>

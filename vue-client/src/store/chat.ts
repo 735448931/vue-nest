@@ -11,8 +11,7 @@ const options = {
 	SDKAppID: 1600115490
 }
 
-const secretKey =
-	'1e09080518204bf956eeb692c56027402b82000993c792083a1c9d64cd51f384'
+const secretKey = '1e09080518204bf956eeb692c56027402b82000993c792083a1c9d64cd51f384'
 const chat = TencentCloudChat.create(options)
 chat.setLogLevel(3)
 chat.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin })

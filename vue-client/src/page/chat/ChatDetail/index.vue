@@ -42,11 +42,8 @@ const chatDetailRef = ref<HTMLElement>()
 const getMessageList = async () => {
 
     if (chatStore.conversation.chatID === '-1') return
-    
-    
     if (!chatStore.conversation.chatID) return
-    const result = await chatStore.changeConversation(chatStore.conversation.chatID.toString())
-    console.log('🍿🍿🍿🍿🍿result:', result);
+    await chatStore.changeConversation(chatStore.conversation.chatID.toString())
 }
 
 onMounted(() => {
