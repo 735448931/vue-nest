@@ -5,7 +5,7 @@
 			<!-- <TimeStamp v-if="shouldShowTime(item, index)" :time="item.time" /> -->
 
 			<!-- 消息组件 -->
-			<TextMessage :message="item" />
+			<TextMessage :message="item"  />
 		</template>
 	</div>
 </template>

@@ -50,8 +50,6 @@ const handleSend = async () => {
         content[content.length - 1].payload.text = text?.substring(0, text.lastIndexOf('\n'))
     }
 
-    console.log('🍿🍿🍿🍿🍿content:', content);
-
     content.forEach((item: any) => {
         if (item.type === 'text') {
             chatStore.sendTextMessage(chatStore.conversation.chatID!,item.payload.text)
@@ -74,21 +72,6 @@ interface ITipTapEditorContent {
 }
 
 
-function getEditorContent(): Array<ITipTapEditorContent> {
-    const editorJSON = tiptapRef.value!.editor?.getJSON()
-    const content: Array<ITipTapEditorContent> = []
-    handleEditorContent(editorJSON as any, content)
-    if (
-        content.length > 0 &&
-        content[content.length - 1] &&
-        content[content.length - 1]?.type === 'text' &&
-        content[content.length - 1]?.payload?.text?.endsWith('\n')
-    ) {
-        const text = content[content.length - 1]!.payload.text
-        content[content.length - 1]!.payload.text = text?.substring(0, text.lastIndexOf('\n'))
-    }
-    return content
-}
 
 function handleEditorContent(root: any, content: Array<ITipTapEditorContent>) {
     if (!root || !root.type) {

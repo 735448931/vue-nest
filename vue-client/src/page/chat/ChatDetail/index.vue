@@ -41,8 +41,6 @@ const chatDetailRef = ref<HTMLElement>()
 // 获取聊天记录
 const getMessageList = async () => {
 
-    console.log('🍿🍿🍿🍿🍿chatStore.conversation.chatID:', chatStore.conversation.chatID === '-1');
-
     if (chatStore.conversation.chatID === '-1') return
     
     
