@@ -7,7 +7,7 @@
         <div class="chat-list">
             <div v-for="user in userList" :key="user.id" class="chat-item" @click="handleClick(user.id)">
                 <div class="avatar">
-                    <img :src="user.avatar" />
+                    <img :src="user.headPic || 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png' " />
                 </div>
                 <div class="info">
                     <div class="name-time">
@@ -57,12 +57,12 @@ const getUserList = async () => {
         const userId = item.userProfile?.userID
         const unreadCount = item.unreadCount 
         unreadMap.set(userId,unreadCount)
-    })
+    })    
 
     userList.value = userList.value.map(user => {
         return {
             ...user,
-            unreadCount: unreadMap.get(user.id) || 0
+            unreadCount: unreadMap.get(user.id.toString()) || 0
         }
     })
 

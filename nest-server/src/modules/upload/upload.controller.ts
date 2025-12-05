@@ -20,6 +20,7 @@ import { UploadImageParsePipe } from './pipes/upload-image-parse.pipe'
 import fs from 'fs'
 import path from 'path'
 import config from '../../config/config'
+import { UserId } from 'src/decorator/custom-decorator'
 
 const OSS = require('ali-oss')
 
@@ -51,6 +52,7 @@ export class UploadController {
 	@Post('ali-oss')
 	@UseInterceptors(FileInterceptor('image'))
 	async uploadAliOss(
+		@UserId() userId: number,
 		@UploadedFile() file: Express.Multer.File,
 		@Body() body: any
 	) {
@@ -107,16 +109,12 @@ export class UploadController {
 					fs.createReadStream(file.path),
 					{ headers }
 				)
-
-		console.log('🍿🍿🍿🍿🍿result:', result)
+		
+		await this.uploadService.updateUserAvatar(userId, result.url)
 
 		return {
-			code: 200,
-			message: '成功',
-			data: {
 				objectName,
 				url: result.url
-			}
 		}
 	}
 

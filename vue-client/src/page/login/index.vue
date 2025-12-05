@@ -158,14 +158,10 @@ const handleAccountLogin = async () => {
 		isSubmitting.value = true
         await accountFormRef.value.validate()
 
-		const {data} = await loginApi({
-			username: accountForm.username,
-			password: accountForm.password,
-		})
-
-		console.log('🍿🍿🍿🍿🍿data:', data);
-
-		userStore.setUserId(data.id)
+        await userStore.handleLogin({
+            username: accountForm.username,
+            password: accountForm.password,
+        })
 		
         
 		ElMessage.success('登录成功')
