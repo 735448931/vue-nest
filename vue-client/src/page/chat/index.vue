@@ -17,7 +17,7 @@ import { gsap } from 'gsap'
 import useChatStore from '@/store/chat'
 import ChatList from './ChatList/index.vue'
 import ChatDetail from './ChatDetail/index.vue'
-import { onMounted, useTemplateRef, nextTick } from 'vue'
+import { useTemplateRef, nextTick } from 'vue'
 
 // ===================== 数据 =====================
 const chatStore = useChatStore()
