@@ -35,7 +35,6 @@ import { onMounted } from 'vue'
 
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import Emoji from '../chat/ChatDetail/components/Emoji.vue'
 
 
 const chatStore = useChatStore()

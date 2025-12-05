@@ -29,12 +29,17 @@ const EnterHandler = Extension.create({
 
 // 自定义 Image 扩展，设置默认样式
 const CustomImage = Image.extend({
+    name:'custom-image',
     addAttributes() {
         return {
             ...this.parent?.(),
             style: {
                 default: 'max-width: 200px; max-height: 200px; border-radius: 8px;',
             },
+            class: {
+                default: 'image',
+                rendered:false
+            }
         }
     },
 })

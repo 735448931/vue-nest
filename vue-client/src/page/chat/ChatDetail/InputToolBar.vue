@@ -42,7 +42,6 @@
                     </div>
                 </template>
 
-                <Emoji @sendEmoji="onSelectEmoji"></Emoji>
             </el-popover>
         </div>
     </div>
@@ -55,10 +54,6 @@ import Emoji from './components/Emoji.vue'
 // 状态管理
 const isDeepThinking = ref(false)
 const isWebSearch = ref(false)
-
-const onSelectEmoji = () => {
-    
-}
 
 // 切换功能状态
 const toggleDeepThinking = () => {
