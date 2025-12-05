@@ -207,7 +207,6 @@ const useChatStore = defineStore('chat', () => {
 
 		console.log('🍿🍿🍿🍿🍿data:聊天消息列表数据', data);
 		
-
 		const { messageList, nextReqMessageID, isCompleted } = data
 
 		messageData.messageList = [
@@ -217,14 +216,10 @@ const useChatStore = defineStore('chat', () => {
 		messageData.nextReqMessageID = nextReqMessageID
 		messageData.isCompleted = isCompleted
 
-
 		// 上报已读
-		const res = await chat.setMessageRead({
+		await chat.setMessageRead({
 			conversationID: conversation.conversationID
 		})
-
-		console.log('🍃 上报已读的结果', res);
-		
 		
 	}
 
@@ -235,6 +230,7 @@ const useChatStore = defineStore('chat', () => {
 		conversation,
 		unreadMessageCount,
 		openDrawer,
+		getMessageList,
 		closeDrawer,
 		toggleDrawer,
 		login,

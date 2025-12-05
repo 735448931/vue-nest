@@ -1,5 +1,5 @@
 <template>
-	<div class="message-list">
+	<div class="message-list" ref="scrollRef">
 		<template v-for="(item, index) in chatStore.messageData.messageList" :key="index">
 			<!-- 时间戳 - 根据条件显示 -->
 			<!-- <TimeStamp v-if="shouldShowTime(item, index)" :time="item.time" /> -->
@@ -13,12 +13,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, useTemplateRef } from 'vue'
 import TextMessage from './components/TextMessage.vue'
 import TimeStamp from './components/TimeStamp.vue'
 import useChatStore from '@/store/chat'
 import TencentCloudChat from '@tencentcloud/chat'
 import ImageMessage from './components/ImageMessage.vue'
+import  { useInfiniteScroll, useScroll } from '@vueuse/core'
 
 // 消息数据类型
 interface Message {
@@ -35,16 +36,46 @@ const chatStore = useChatStore()
 // 模拟消息数据
 const messages = ref<any>([])
 
+const smooth = ref(true)
+const refreshing = ref(false)
+const scrollRef = useTemplateRef('scrollRef')
+const behavior = computed(() => {
+	return smooth.value ? 'smooth' : 'instant'
+})
 
-setTimeout(() => {
-	console.log('增加说明🌛获取的信息列表数据:',chatStore.messageData.messageList);
-}, 2000);
+const { y } = useScroll(scrollRef, { behavior })
 
+useInfiniteScroll(scrollRef, async () => {
+	const oldScrollHeight = scrollRef.value?.scrollHeight || 0
+	if (chatStore.messageData.nextReqMessageID && !refreshing.value) {
+		smooth.value = false
+		refreshing.value = true
+		await chatStore.getMessageList()
+		await nextTick()
+		// todo:暂时不动
+		y.value = (scrollRef.value?.scrollHeight || 0) - oldScrollHeight
+		refreshing.value = false
+	}
+}, {
+	distance: 120,
+	direction: 'top',
+})
+
+
+
+const scrollToBottom = async () => {
+	await nextTick()
+	y.value = scrollRef.value?.scrollHeight || 0
+	smooth.value = true
+}
+
+onMounted(() => {
+	scrollToBottom()
+})
 
 
 /**
  * 判断是否应该显示时间戳
- * 参考微信的规则：
  * 1. 第一条消息必显示
  * 2. 与上一条消息间隔超过5分钟才显示
  */
