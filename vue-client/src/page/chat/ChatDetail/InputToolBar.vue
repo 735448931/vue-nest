@@ -49,7 +49,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import Emoji from './components/Emoji.vue'
 
 // 状态管理
 const isDeepThinking = ref(false)

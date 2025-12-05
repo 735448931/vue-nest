@@ -66,6 +66,8 @@ async function onMessageReceived(event: any) {
 }
 
 async function onConversationListUpdated(event: { data: any }) {
+	console.log('会话列表发生变化',event.data);
+	
 	const chatStore = useChatStore()
 
 	chatStore.conversation.conversationList = event.data
@@ -236,6 +238,7 @@ const useChatStore = defineStore('chat', () => {
 		closeDrawer,
 		toggleDrawer,
 		login,
+		logout,
 		sendTextMessage,
 		sendImageMessage,
 		changeConversation

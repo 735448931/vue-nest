@@ -16,9 +16,9 @@
                     </div>
                     <div class="last-message">{{ user.lastMessage || 'Ceshi' }}</div>
                 </div>
-                <!-- <div v-if="user.unreadCount > 0" class="unread-badge">
+                <div v-if="user.unreadCount > 0" class="unread-badge">
                         {{ user.unreadCount > 99 ? '99+' : user.unreadCount }}
-                    </div> -->
+                </div>
             </div>
         </div>
 
@@ -28,6 +28,7 @@
 <script setup lang="ts">
 import { chatUserListApi } from '@/api/chat';
 import type { ChatUser } from '@/api/interface/chat';
+import useChatStore from '@/store/chat';
 import useUserStore from '@/store/user';
 import { onMounted, ref } from 'vue'
 
@@ -42,12 +43,30 @@ const emits = defineEmits<Emits>()
 const userList = ref<any[]>([])
 const chatListRef = ref<HTMLElement>()
 const userStore = useUserStore()
+const chatStore = useChatStore()
 // ===================== 方法 =====================
 
 // 获取用户列表
 const getUserList = async () => {
     const { data } = await chatUserListApi({ userId: userStore.userId })
     userList.value = data
+
+    const unreadMap = new Map([])
+
+    chatStore.conversation.conversationList.forEach((item:any) => {
+        const userId = item.userProfile?.userID
+        const unreadCount = item.unreadCount 
+        unreadMap.set(userId,unreadCount)
+    })
+
+    userList.value = userList.value.map(user => {
+        return {
+            ...user,
+            unreadCount: unreadMap.get(user.id) || 0
+        }
+    })
+
+    
 }
 
 // 处理用户点击-跳转详情
@@ -60,7 +79,6 @@ const handleClick = (chatId: string) => {
 
 // ===================== 生命周期 =====================
 onMounted(() => {
-    console.log('组件挂载了++++++++++++');
      getUserList()
 })
 
